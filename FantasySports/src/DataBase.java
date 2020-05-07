@@ -81,7 +81,6 @@ public class DataBase {
 
         for (int x = 0; x < NUMROWS; x++) {
             output[x] = data[x+1][saveSpot];
-            System.out.println(data[x+1][saveSpot]);
         }
 
         return output;
