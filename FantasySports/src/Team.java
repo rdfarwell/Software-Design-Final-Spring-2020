@@ -20,4 +20,12 @@ public class Team {
     public String getTeam(){
         return Arrays.toString(teamMates);
     }
+
+    public void trade(String traded, String received) {
+        for (int i = 0; i < 6; i++) {
+            if (teamMates[i].getCharName().equals(traded)) {
+                teamMates[i] = new Character(received);
+            }
+        }
+    }
 }
