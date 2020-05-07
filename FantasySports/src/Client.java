@@ -15,6 +15,7 @@ public class Client extends JFrame implements Runnable {
     private final JTextArea displayArea;
     private final JPanel panel;
     private final JPanel subPanel;
+    private final JButton chat;
     private Socket connection;
     private Scanner input;
     private Formatter output;
@@ -26,16 +27,18 @@ public class Client extends JFrame implements Runnable {
         super("Fantasy Overwatch");
         Host = host;
         panel = new JPanel();
-        subPanel = new JPanel();
-        displayArea = new JTextArea(14, 30);
+        subPanel = new JPanel(new FlowLayout());
+        chat = new JButton("Chat");
+        displayArea = new JTextArea(13, 35);
         displayArea.setEditable(false);
         scroll = new JScrollPane(displayArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         panel.add(scroll, BorderLayout.CENTER);
         add(panel, BorderLayout.WEST);
-        //The subpanel is for adding buttons/other GUI elements
-        add(subPanel, BorderLayout.EAST);
-        setSize(500, 300);
+        subPanel.add(chat, BorderLayout.CENTER);
+        add(subPanel, BorderLayout.SOUTH);
+        setSize(393, 290);
+        setResizable(false);
         setVisible(true);
 
         startClient();
@@ -80,11 +83,9 @@ public class Client extends JFrame implements Runnable {
     }
 
     private void processMessage(String message) {
-        if (message.contains("hit:"))
-        {
-            message = message.replace("hit: ", "");
-            displayMessage("\nYou got a " + message);
-            displayMessage("\nWould you like to Hit or Stand?");
+        if (message.contains("output:")) {
+            message = message.replace("output: ", "");
+            displayMessage(message);
         }
     }
 

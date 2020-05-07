@@ -18,8 +18,7 @@ public class Server extends JFrame {
     private ServerSocket server;
     private final ExecutorService runGame;
     private final Lock gameLock;
-
-    private Condition otherPlayerConnected;
+    private Condition playersConnected;
     private boolean gameOver;
 
     public Server() {
@@ -42,6 +41,7 @@ public class Server extends JFrame {
         //create JTextArea for output
         outputArea = new JTextArea();
         outputArea.setText("Server awaiting connections\n");
+        outputArea.setEditable(false);
         scroll = new JScrollPane(outputArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         add(scroll, BorderLayout.CENTER);
@@ -107,45 +107,34 @@ public class Server extends JFrame {
                 output.format("%s\n", (playerNumber + 1));
                 output.flush();
 
-                //if player 1, wait for another player to arrive
+                //wait for other players
                 if (playerNumber == 0) {
-                    output.format("%s\n", "output: Player " + playerNumber +  " connected");
-                    output.flush();
-
-                    //wait for player 2
                     gameLock.lock();
                     try {
                         while (suspended) {
-                            otherPlayerConnected.await();
+                            playersConnected.await();
                         }
                     }
                     catch (InterruptedException exception) {
                         exception.printStackTrace();
                     }
-                    //unlock game after second player
+                    //unlock game after all players have joined
                     finally {
                         gameLock.unlock();
                     }
 
                     //send message that other player connected
-                    output.format("output: Player 2 connected.\n");
+                    output.format("output: All Players connected\n");
                     output.flush();
 
                     //output the dealer's first card to player 1
-                    output.format("output: Dealer got a "  + "\n");
+                    output.format("output: Draft Starting\n");
                     output.flush();
                 }
                 else {
-                    output.format("output: Player 2 connected.\n");
-                    output.flush();
-
-                    //output the dealer's first card to player 2
-                    output.format("output: Dealer got a " + "\n");
                     output.flush();
                 }
 
-                //set client score to zero
-                int clientScore = 0;
                 //temp string to get input from client
                 String inputString;
 
@@ -153,11 +142,9 @@ public class Server extends JFrame {
                 while (!gameOver) {
                     inputString = input.nextLine();
 
-                    if (inputString.equals("hit")) {
-                        if (clientScore > 21) {
-                            output.format("end: You busted! Dealer wins!\n");
-                            output.flush();
-                        }
+                    if (inputString.equals("draft:")) {
+                        output.format("output: You drafted: " + "\n");
+                        output.flush();
                     }
                 }
             }
@@ -172,6 +159,15 @@ public class Server extends JFrame {
                     System.exit(1);
                 }
             }
+        }
+
+        /**
+         * Sets whether or not thread is suspended
+         * @param status the status of suspension
+         */
+        public void setSuspended(boolean status) {
+            //set value of suspended
+            suspended = status;
         }
     }
 }
