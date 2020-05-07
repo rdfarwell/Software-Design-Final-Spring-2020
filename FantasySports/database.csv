@@ -1,3 +1,33 @@
 Name,Role,Offense,Defense,Support
-Ana,Support,.3,.2,.85
-Ashe,Offense,.85,.1,.05
+Ana,30,20,85
+Ashe,85,5,05
+Baptiste,20,50,80
+Bastion,50,20,5
+Brigitte,35,40,75
+D.VA,60,60,15
+Doomfist,80,5,0
+Echo,75,25,10
+Genji,90,5,0
+Hanzo,85,10,0
+Junkrat,90,15,5
+Lucio,15,25,80
+McCree,90,10,0
+Mei,40,65,10
+Mercy,5,20,100
+Moira,55,15,75
+Orisa,30,85,10
+Pharah,85,5,0
+Reaper,100,0,0
+Reinhardt,20,100,0
+Roadhog,50,50,0
+Sigma,35,60,10
+Soldier: 76,95,5,15
+Sombra,90,0,10
+Symmetra,45,60,15
+Torbjorn,45,60,25
+Tracer,95,0,0
+Widowmaker,85,10,10
+Winston,40,50,0
+Wrecking Ball,65,25,0
+Zarya,50,20,25
+Zenyatta,45,10,25
