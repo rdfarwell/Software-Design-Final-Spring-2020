@@ -1,25 +1,27 @@
 public class Character {
-    private String charName, role;
+    private String charName;
     private int offense, defense, support;
 
-    public Character(String charName){
+    public Character(String charName) {
         this.charName = charName;
-
+        offense = Integer.parseInt(DataBase.getStats(charName)[2]);
+        defense = Integer.parseInt(DataBase.getStats(charName)[3]);
+        support = Integer.parseInt(DataBase.getStats(charName)[4]);
     }
 
-    public String getCharName(){
+    public String getCharName() {
         return charName;
     }
-    public int getOffense(){
+
+    public int getOffense() {
         return offense;
     }
-    public int getDefense(){
+
+    public int getDefense() {
         return defense;
     }
-    public int getSupport(){
+
+    public int getSupport() {
         return support;
-    }
-    public String getRole(){
-        return role;
     }
 }
