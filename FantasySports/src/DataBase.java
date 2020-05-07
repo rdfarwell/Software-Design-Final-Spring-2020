@@ -14,7 +14,7 @@ public class DataBase {
     public static void main(String[] args) {
         addFields();
         readFile();
-        getData("name");
+        getData("Name");
     }
 
     public static void addFields() {
