@@ -26,7 +26,6 @@ public class Server extends JFrame {
         //set title of window
         super("Fantasy Server");
         //create ExecutorService with a thread for each player
-        //TODO: How many players are we going to have?
         runGame = Executors.newFixedThreadPool(4);
         //create lock for game
         gameLock = new ReentrantLock();
@@ -105,8 +104,8 @@ public class Server extends JFrame {
             try {
                 displayMessage("Player " + (playerNumber + 1) +  " connected\n");
                 //send player's mark
-//                output.format("%s\n");
-//                output.flush();
+                output.format("%s\n", (playerNumber + 1));
+                output.flush();
 
                 //if player 1, wait for another player to arrive
                 if (playerNumber == 0) {
