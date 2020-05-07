@@ -8,11 +8,11 @@ public class Team {
     public Team() {
     }
 
-    public void addTeamMate(Character character) {
+    public void addTeamMate(String name) {
         for (int i = 0; i < 6; i++) {
             if (!onTeam.get(i)) {
                 onTeam.put(i, true);
-                teamMates[i] = character;
+                teamMates[i] = new Character(name);
             }
         }
     }
