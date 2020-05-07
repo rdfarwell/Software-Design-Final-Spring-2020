@@ -11,24 +11,31 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Client extends JFrame implements Runnable {
+    private final JScrollPane scroll;
     private final JTextArea displayArea;
     private final JPanel panel;
+    private final JPanel subPanel;
     private Socket connection;
     private Scanner input;
     private Formatter output;
     private final String Host;
     private String myID;
+    private final buttonListener hitListener = new buttonListener();
 
     public Client(String host) {
-        super("Fantasy");
+        super("Fantasy Overwatch");
         Host = host;
         panel = new JPanel();
+        subPanel = new JPanel();
         displayArea = new JTextArea(14, 30);
         displayArea.setEditable(false);
-        panel.setLayout(new BorderLayout());
-        panel.add(displayArea, BorderLayout.NORTH);
-        add(panel);
-        setSize(300, 300);
+        scroll = new JScrollPane(displayArea);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        panel.add(scroll, BorderLayout.CENTER);
+        add(panel, BorderLayout.WEST);
+        //The subpanel is for adding buttons/other GUI elements
+        add(subPanel, BorderLayout.EAST);
+        setSize(500, 300);
         setVisible(true);
 
         startClient();
@@ -60,7 +67,7 @@ public class Client extends JFrame implements Runnable {
                 new Runnable() {
                     public void run() {
                         //display player's mark
-                        displayArea.setText("You are player \"" + myID + "\"");
+                        displayArea.setText("You are player " + myID + "");
                     }
                 }
         );
@@ -89,5 +96,15 @@ public class Client extends JFrame implements Runnable {
                     }
                 }
         );
+    }
+
+    private class buttonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            if ( true) {
+                output.format("hit\n");
+                output.flush();
+            }
+        }
     }
 }
