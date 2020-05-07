@@ -1,4 +1,3 @@
-Name,Role,Stat
-Dean,DataBase,Yes
-Alex,Extra,No
-Nolan,BackBone,Test
+Name,Role,Offense,Defense,Support
+Ana,Support,.3,.2,.85
+Ashe,Offense,.85,.1,.05

@@ -1,6 +1,4 @@
-import javax.print.DocFlavor;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
@@ -8,28 +6,25 @@ import java.util.Scanner;
 public class DataBase {
     private static File file = new File("FantasySports/database.csv");
     private static String[][] data;
-    private static final int NUMROWS = 3;
-    private static final int NUMDATA = 3;
-
-    public static void main(String[] args) {
-        addFields();
-        readFile();
-        getData("Name");
-    }
+    private static final int NUMROWS = 2;
+    private static final int NUMDATA = 5;
 
     public static void addFields() {
         try {
             String[][] rows = new String[NUMROWS][NUMDATA];
-            rows[0] = new String[] {"Dean", "DataBase", "Yes"};
-            rows[1] = new String[] {"Alex", "Extra", "No"};
-            rows[2] = new String[] {"Nolan", "BackBone", "Test"};
+            rows[0] = new String[] {"Ana", "Support", ".3", ".2", ".85"};
+            rows[1] = new String[] {"Ashe", "Offense", ".85", ".1", ".05"};
 
             FileWriter output = new FileWriter(file);
             output.append("Name");
             output.append(",");
             output.append("Role");
             output.append(",");
-            output.append("Stat");
+            output.append("Offense");
+            output.append(",");
+            output.append("Defense");
+            output.append(",");
+            output.append("Support");
             output.append("\n");
 
             for (String[] row : rows) {
@@ -84,5 +79,14 @@ public class DataBase {
         }
 
         return output;
+    }
+
+    public static String[] getStats(String name) {
+        for (String[] row : data) {
+            if (row[0].toUpperCase().equals(name.toUpperCase())) {
+                return row;
+            }
+        }
+        return new String[] {""};
     }
 }
