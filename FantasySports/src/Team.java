@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Team {
@@ -14,5 +15,9 @@ public class Team {
                 teamMates[i] = character;
             }
         }
+    }
+
+    public String getTeam(){
+        return Arrays.toString(teamMates);
     }
 }
