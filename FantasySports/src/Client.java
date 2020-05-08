@@ -30,7 +30,7 @@ public class Client extends JFrame implements Runnable {
         subPanel = new JPanel(new FlowLayout());
         chat = new JButton("Chat");
         displayArea = new JTextArea(13, 35);
-        displayArea.setEditable(false);
+        //displayArea.setEditable(false);
         scroll = new JScrollPane(displayArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         panel.add(scroll, BorderLayout.CENTER);
@@ -87,6 +87,10 @@ public class Client extends JFrame implements Runnable {
             message = message.replace("output: ", "");
             displayMessage(message);
         }
+        else if (message.contains("draft:")) {
+            message = message.replace("draft: ", "");
+            displayMessage(message);
+        }
     }
 
     private void displayMessage(final String messageToDisplay) {
@@ -102,8 +106,8 @@ public class Client extends JFrame implements Runnable {
     private class buttonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
-            if ( true) {
-                output.format("hit\n");
+            if (true) {
+                output.format("hit:\n");
                 output.flush();
             }
         }

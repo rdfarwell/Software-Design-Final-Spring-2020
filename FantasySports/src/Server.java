@@ -18,8 +18,14 @@ public class Server extends JFrame {
     private ServerSocket server;
     private final ExecutorService runGame;
     private final Lock gameLock;
-    private Condition playersConnected;
-    private boolean gameOver;
+    private final Condition playersConnected;
+    private final Condition player1Turn;
+    private final Condition player2Turn;
+    private final Condition player3Turn;
+    private final Condition player4Turn;
+    private final boolean draftRound;
+    private boolean gameTime;
+    private int currentPlayer;
 
     public Server() {
         //set title of window
@@ -28,6 +34,17 @@ public class Server extends JFrame {
         runGame = Executors.newFixedThreadPool(4);
         //create lock for game
         gameLock = new ReentrantLock();
+        //condition for all players being connected
+        playersConnected = gameLock.newCondition();
+        //condition variable for each player's turn
+        player1Turn = gameLock.newCondition();
+        player2Turn = gameLock.newCondition();
+        player3Turn = gameLock.newCondition();
+        player4Turn = gameLock.newCondition();
+        //set the starting player
+        currentPlayer = 0;
+        //set the game into the draft round
+        draftRound = true;
 
         //set up ServerSocket - port range: 23503 - 23508
         try {
@@ -63,19 +80,18 @@ public class Server extends JFrame {
                 System.exit(1);
             }
         }
-    }
 
-    private void displayMessage(final String messageToDisplay) {
-        //display message from event-dispatch thread of execution
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    //updates outputArea
-                    public void run() {
-                        //add message
-                        outputArea.append(messageToDisplay);
-                    }
-                }
-        );
+        gameLock.lock();
+        try {
+            //resume player 1
+            players[0].setSuspended(false);
+            //wake up player 1's thread
+            player1Turn.signal();
+        }
+        finally {
+            //unlock game after signalling player 1
+            gameLock.unlock();
+        }
     }
 
     private class Player implements Runnable {
@@ -86,7 +102,7 @@ public class Server extends JFrame {
         private boolean suspended = true;
 
         public Player(Socket socket, int number) {
-            playerNumber = number; //store this player's number
+            playerNumber = number + 1; //store this player's number
             connection = socket; //store socket for client
 
             //obtain streams from Socket
@@ -102,14 +118,15 @@ public class Server extends JFrame {
 
         public void run() {
             try {
-                displayMessage("Player " + (playerNumber + 1) +  " connected\n");
-                //send player's mark
-                output.format("%s\n", (playerNumber + 1));
+                displayMessage("Player " + playerNumber +  " connected\n");
+                //send player's ID number
+                output.format("%s\n", playerNumber);
                 output.flush();
 
                 //wait for other players
-                if (playerNumber == 0) {
+                if (playerNumber == 1) {
                     gameLock.lock();
+
                     try {
                         while (suspended) {
                             playersConnected.await();
@@ -126,32 +143,34 @@ public class Server extends JFrame {
                     //send message that other player connected
                     output.format("output: All Players connected\n");
                     output.flush();
-
-                    //output the dealer's first card to player 1
-                    output.format("output: Draft Starting\n");
-                    output.flush();
                 }
-                else {
-                    output.flush();
+                else if (playerNumber == 4) {
+                    displayMessage("All Players connected\n");
                 }
 
                 //temp string to get input from client
                 String inputString;
 
-                // while game not over
-                while (!gameOver) {
+                //TODO drafting round
+                while (draftRound) {
                     inputString = input.nextLine();
 
-                    if (inputString.equals("draft:")) {
-                        output.format("output: You drafted: " + "\n");
+                    if (inputString.contains("draft:")) {
+                        output.format("draft: You drafted:  \n");
                         output.flush();
                     }
+                }
+                //TODO: After draft, start normal game time
+                while (gameTime) {
+
                 }
             }
 
             //close connection to client
             finally {
                 try {
+                    input.close();
+                    output.close();
                     connection.close();
                 }
                 catch (IOException ioException) {
@@ -168,6 +187,96 @@ public class Server extends JFrame {
         public void setSuspended(boolean status) {
             //set value of suspended
             suspended = status;
+        }
+
+        private void displayMessage(final String messageToDisplay) {
+            //display message from event-dispatch thread of execution
+            SwingUtilities.invokeLater(
+                    new Runnable() {
+                        //updates outputArea
+                        public void run() {
+                            //add message
+                            outputArea.append(messageToDisplay);
+                        }
+                    }
+            );
+        }
+
+        public boolean validateDraftPick(String name, int player) {
+            while (player != currentPlayer) {
+                //lock game to wait for other player to go
+                gameLock.lock();
+
+                //wait for each player's turn
+                try {
+                    if (player == 1) {
+                        player2Turn.await();
+                        player3Turn.await();
+                        player4Turn.await();
+                    }
+                    else if (player == 2) {
+                        player1Turn.await();
+                        player3Turn.await();
+                        player4Turn.await();
+                    }
+                    else if (player == 3) {
+                        player1Turn.await();
+                        player2Turn.await();
+                        player4Turn.await();
+                    }
+                    else if (player == 4) {
+                        player1Turn.await();
+                        player2Turn.await();
+                        player3Turn.await();
+                    }
+                }
+                catch (InterruptedException exception) {
+                    exception.printStackTrace();
+                }
+                finally {
+                    //unlock game after waiting
+                    gameLock.unlock();
+                }
+            }
+
+            //TODO add boolean method to check if player was drafted using the passed name
+            if (!draftedPlayer(name)) {
+                //change player
+                currentPlayer = (currentPlayer + 1) % 4;
+
+                //lock game to signal other player to go
+                gameLock.lock();
+
+                try {
+                    //signal the next player
+                    if (player == 1) {
+                        player2Turn.signal();
+                    }
+                    else if (player == 2) {
+                        player3Turn.signal();
+                    }
+                    else if (player == 3) {
+                        player4Turn.signal();
+                    }
+                    else if (player == 4) {
+                        player1Turn.signal();
+                    }
+                }
+                finally {
+                    //unlock game after signaling
+                    gameLock.unlock();
+                }
+                //let player know that the player they selected was drafted successfully
+                return (true);
+            }
+            else {
+                return (false);
+            }
+        }
+
+        //TODO: determine if a character has been drafted or not
+        public boolean draftedPlayer(String name) {
+            return true;
         }
     }
 }
