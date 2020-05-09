@@ -2,23 +2,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Formatter;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Client extends JFrame implements Runnable {
     private final JScrollPane scroll;
     private final JTextArea displayArea;
-    private final JPanel panel;
+    private final JTextField inputArea;
+    private final JPanel leftPanel;
+    private final JPanel rightPanel;
     private final JPanel subPanel;
-    private final JButton chat;
+    private final JButton send;
+    private ActionListener buttonListener = new buttonListener();
     private Socket connection;
-    private Scanner input;
-    private Formatter output;
+    private BufferedReader input;
+    private PrintWriter output;
     private final String Host;
     private String myID;
     private final buttonListener hitListener = new buttonListener();
@@ -26,18 +30,24 @@ public class Client extends JFrame implements Runnable {
     public Client(String host) {
         super("Fantasy Overwatch");
         Host = host;
-        panel = new JPanel();
+        leftPanel = new JPanel();
+        rightPanel = new JPanel();
         subPanel = new JPanel(new FlowLayout());
-        chat = new JButton("Chat");
+        send = new JButton("Send");
+        send.addActionListener(buttonListener);
         displayArea = new JTextArea(13, 35);
-        //displayArea.setEditable(false);
+        displayArea.setEditable(false);
+        inputArea = new JTextField("", 20);
+//        inputArea.setEditable(false); //make initially false until server accepts all users
         scroll = new JScrollPane(displayArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        panel.add(scroll, BorderLayout.CENTER);
-        add(panel, BorderLayout.WEST);
-        subPanel.add(chat, BorderLayout.CENTER);
+        leftPanel.add(scroll, BorderLayout.WEST);
+        rightPanel.add(inputArea, BorderLayout.EAST);
+        add(leftPanel, BorderLayout.WEST);
+        subPanel.add(rightPanel, BorderLayout.EAST);
+        subPanel.add(send, BorderLayout.CENTER);
         add(subPanel, BorderLayout.SOUTH);
-        setSize(393, 290);
+        setSize(393, 295);
         setResizable(false);
         setVisible(true);
 
@@ -51,8 +61,8 @@ public class Client extends JFrame implements Runnable {
             connection = new Socket(InetAddress.getByName(Host), 23504);
 
             //get streams for input and output
-            input = new Scanner(connection.getInputStream());
-            output = new Formatter(connection.getOutputStream());
+            input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            output = new PrintWriter(connection.getOutputStream(), true);
         }
         catch (IOException ioException) {
             ioException.printStackTrace();
@@ -64,7 +74,11 @@ public class Client extends JFrame implements Runnable {
     }
 
     public void run() {
-        myID = input.nextLine();
+        try {
+            myID = input.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         SwingUtilities.invokeLater(
                 new Runnable() {
@@ -77,8 +91,12 @@ public class Client extends JFrame implements Runnable {
 
         //receive messages sent to client and output them
         while (true) {
-            if (input.hasNextLine())
-                processMessage(input.nextLine());
+            try {
+                processMessage(input.readLine());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -89,6 +107,10 @@ public class Client extends JFrame implements Runnable {
         }
         else if (message.contains("draft:")) {
             message = message.replace("draft: ", "");
+            displayMessage(message);
+        }
+        else if (message.contains("message:")) {
+            message = message.replace("message: ", "");
             displayMessage(message);
         }
     }
@@ -106,10 +128,8 @@ public class Client extends JFrame implements Runnable {
     private class buttonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
-            if (true) {
-                output.format("hit:\n");
-                output.flush();
-            }
+            output.format("message: " + inputArea.getText() + "\n");
+            output.flush();
         }
     }
 }
