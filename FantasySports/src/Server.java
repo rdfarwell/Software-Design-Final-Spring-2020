@@ -239,6 +239,23 @@ public class Server extends JFrame {
 
                         displayMessage("\n" + inputString);
                     }
+                    // chat feature for sending PM's
+                    else if (inputString.contains("@player")) {
+                        for (PrintWriter writer : connectedPlayers) {
+                            if (inputString.contains("1") && writer == players[0].output) {
+                                writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("1", "").trim());
+                            }
+                            else if (inputString.contains("2") && writer == players[1].output) {
+                                writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("2", "").trim());
+                            }
+                            else if (inputString.contains("3") && writer == players[2].output) {
+                                writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("3", "").trim());
+                            }
+                            else if (inputString.contains("4") && writer == players[3].output) {
+                                writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("4", "").trim());
+                            }
+                        }
+                    }
                     //a standard message from a specific player
                     else {
                         for (PrintWriter writer : connectedPlayers) {
