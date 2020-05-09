@@ -15,7 +15,7 @@ public class DataBase {
             String[][] rows = new String[NUMROWS][NUMDATA];
             //                      Name   Offense   Defense   Support
             rows[0] = new String[] {"Ana", "30", "20", "85"};
-            rows[1] = new String[] {"Ashe", "85", "5", "05"};
+            rows[1] = new String[] {"Ashe", "85", "5", "5"};
             rows[2] = new String[] {"Baptiste", "20", "50", "80"};
             rows[3] = new String[] {"Bastion", "50", "20", "5"};
             rows[4] = new String[] {"Brigitte", "35", "40", "75"};

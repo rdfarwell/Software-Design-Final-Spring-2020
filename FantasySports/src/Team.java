@@ -2,8 +2,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Team {
-    Character[] teamMates = new Character[6];
-    HashMap<Integer, Boolean> onTeam = new HashMap<>();
+    private Character[] teamMates = new Character[6];
+    private HashMap<Integer, Boolean> onTeam = new HashMap<>();
+    private int totalScore = 0;
+    private int weeklyScore = 0;
 
     public Team() {
         onTeam.put(0, false);
@@ -50,7 +52,24 @@ public class Team {
         }
     }
 
-    //TODO bug testing delete before finish
+
+    public void addScore(int score) {
+        weeklyScore += score;
+        totalScore += score;
+    }
+
+    public void resetWeeklyScore() {
+        weeklyScore = 0;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public int getWeeklyScore() {
+        return weeklyScore;
+    }
+
     @Override
     public String toString() {
         return "Team{" + Arrays.toString(teamMates) + '}';
