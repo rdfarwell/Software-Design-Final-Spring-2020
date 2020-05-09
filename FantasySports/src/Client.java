@@ -128,7 +128,7 @@ public class Client extends JFrame implements Runnable {
     private class buttonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
-            output.format("message: " + inputArea.getText() + "\n");
+            output.format(inputArea.getText() + "\n");
             output.flush();
         }
     }

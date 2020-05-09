@@ -21,10 +21,6 @@ public class Server extends JFrame {
     private final ExecutorService runGame;
     private final Lock gameLock;
     private final Condition playersConnected;
-    private final Condition player1Turn;
-    private final Condition player2Turn;
-    private final Condition player3Turn;
-    private final Condition player4Turn;
     private boolean gameOver = false;
     private int currentPlayer;
     private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
@@ -38,11 +34,6 @@ public class Server extends JFrame {
         gameLock = new ReentrantLock();
         //condition for all players being connected
         playersConnected = gameLock.newCondition();
-        //condition variable for each player's turn
-        player1Turn = gameLock.newCondition();
-        player2Turn = gameLock.newCondition();
-        player3Turn = gameLock.newCondition();
-        player4Turn = gameLock.newCondition();
         //set the starting player
         currentPlayer = 0;
 
@@ -66,13 +57,6 @@ public class Server extends JFrame {
         setVisible(true);
     }
 
-    public void broadcastMessage(int player, String message)  {
-        //send message to all connected players
-        for ( Player p : players )
-            if (!(p.getPlayerNumber() == player))
-                p.sendMessage(player, message);
-    }
-
     public void execute() {
         //wait for each client to connect
         for (int i = 0; i < players.length; i++) {
@@ -88,17 +72,17 @@ public class Server extends JFrame {
             }
         }
 
-        gameLock.lock();
-        try {
-            //resume player 1
-            players[0].setSuspended(false);
-            //wake up player 1's thread
-            player1Turn.signal();
-        }
-        finally {
-            //unlock game after signalling player 1
-            gameLock.unlock();
-        }
+//        gameLock.lock();
+//        try {
+//            //resume player 1
+//            players[0].setSuspended(false);
+//            //wake up player 1's thread
+//            player1Turn.signal();
+//        }
+//        finally {
+//            //unlock game after signalling player 1
+//            gameLock.unlock();
+//        }
     }
 
     private class Player implements Runnable {
@@ -123,14 +107,7 @@ public class Server extends JFrame {
             }
         }
 
-        public int getPlayerNumber() {
-            return playerNumber;
-        }
-
-        public void sendMessage(int playerNumber,String message)  {
-            output.format("Player " + playerNumber +  ":" + message);
-        }
-
+        //run the player thread
         public void run() {
             try {
                 displayMessage("Player " + playerNumber +  " connected\n");
@@ -138,66 +115,56 @@ public class Server extends JFrame {
                 output.format("%s\n", playerNumber);
                 output.flush();
 
-                //wait for other players
+                //lock game on first join
                 if (playerNumber == 1) {
-//                    gameLock.lock();
-
-                    try {
-                        while (suspended) {
-                            playersConnected.await();
-                        }
-                    }
-                    catch (InterruptedException exception) {
-                        exception.printStackTrace();
-                    }
-                    //unlock game after all players have joined
-                    finally {
-                        gameLock.unlock();
-                    }
-
-                    //send message that other player connected
-                    output.format("output: All Players connected\n");
-                    output.flush();
+                    gameLock.lock();
                 }
+                //display all players connected
                 else if (playerNumber == 4) {
                     displayMessage("All Players connected\n");
                 }
 
                 //temp string to get input from client
                 String inputString = null;
-                //add the current player to the list of outputable clients
+                //add the current player to the list of "outputable" clients
                 connectedPlayers.add(output);
 
                 while (!gameOver) {
                     inputString = input.readLine();
                     if (inputString == null) {
-                        return;
+                        output.format("\n");
+                        output.flush();
                     }
-                    for (PrintWriter writer : connectedPlayers) {
-                        writer.println("message: player " + playerNumber + ": " + inputString);
+                    //format message if player wants to draft
+                    if (inputString.contains("@draft")) {
+                        output.format("draft: You drafted:  \n");
+                        output.flush();
+                        //display message to server for log
+                        displayMessage(inputString);
                     }
-//
-//                    if (inputString.contains("draft:")) {
-//                        output.format("draft: You drafted:  \n");
-//                        output.flush();
-//                        broadcastMessage(playerNumber, inputString);
-//                    }
-//                    if (inputString.contains("message:")) {
-//                        output.format("message: \n");
-//                        output.flush();
-//                        displayMessage(inputString);
-//                        broadcastMessage(playerNumber, inputString);
-//                    }
-//                    else {
-//                        output.format(inputString);
-//                        output.flush();
-//                    }
+                    //format message if player wants to trade
+                    if (inputString.contains("@trade")) {
+                        output.format("trade: \n");
+                        output.flush();
+                        //display message to server for log
+                        displayMessage(inputString);
+                    }
+                    //a standard message from a specific player
+                    else {
+                        for (PrintWriter writer : connectedPlayers) {
+                            writer.println("message: player " + playerNumber + ": " + inputString);
+                        }
+                        //display message to server for log
+                        displayMessage("player " + playerNumber + ": " + inputString);
+                    }
                 }
             }
+
             //catch exceptions for input.readLine()
             catch (IOException e) {
                 e.printStackTrace();
             }
+
             //close connection to client
             finally {
                 try {
@@ -210,15 +177,6 @@ public class Server extends JFrame {
                     System.exit(1);
                 }
             }
-        }
-
-        /**
-         * Sets whether or not thread is suspended
-         * @param status the status of suspension
-         */
-        public void setSuspended(boolean status) {
-            //set value of suspended
-            suspended = status;
         }
 
         private void displayMessage(final String messageToDisplay) {
