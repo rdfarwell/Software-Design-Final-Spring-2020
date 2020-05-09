@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +28,7 @@ public class Server extends JFrame {
     private int currentPlayer;
     private String[] drafted = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
     private int draftCount = 0;
+    private static ArrayList<Trade> trades = new ArrayList<>();
     private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
 
     public Server() {
@@ -44,8 +46,7 @@ public class Server extends JFrame {
         //set up ServerSocket - port range: 23503 - 23508
         try {
             server = new ServerSocket(23504, 4);
-        }
-        catch (IOException ioException) {
+        } catch (IOException ioException) {
             ioException.printStackTrace();
             System.exit(1);
         }
@@ -69,8 +70,7 @@ public class Server extends JFrame {
                 players[i] = new Player(server.accept(), i);
                 //execute player runnable
                 runGame.execute(players[i]);
-            }
-            catch (IOException ioException) {
+            } catch (IOException ioException) {
                 ioException.printStackTrace();
                 System.exit(1);
             }
@@ -93,17 +93,20 @@ public class Server extends JFrame {
             try {
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 output = new PrintWriter(socket.getOutputStream(), true);
-            }
-            catch (IOException ioException) {
+            } catch (IOException ioException) {
                 ioException.printStackTrace();
                 System.exit(1);
             }
         }
 
+        public Team getTeam(){
+            return team;
+        }
+
         //run the player thread
         public void run() {
             try {
-                displayMessage("Player " + playerNumber +  " connected\n");
+                displayMessage("Player " + playerNumber + " connected\n");
                 //send player's ID number
                 output.format("%s\n", playerNumber);
                 output.flush();
@@ -166,13 +169,11 @@ public class Server extends JFrame {
                                     output.format("draft: Invalid entry \n");
                                     output.flush();
                                 }
-                            }
-                            else {
+                            } else {
                                 output.format("draft: Not your turn \n");
                                 output.flush();
                             }
-                        }
-                        else {
+                        } else {
                             output.format("draft: Your team is full \n");
                             output.flush();
                         }
@@ -180,16 +181,62 @@ public class Server extends JFrame {
                     }
                     //format message if player wants to trade
                     else if (inputString.contains("@trade")) {
+                        try {
+                            String tradeAttempt = inputString.replace("@trade", "").trim().toUpperCase();
+                            String[] tradeStuff = tradeAttempt.split(",");
+                            String playerTo = tradeStuff[0].trim(), toTrade = tradeStuff[1].trim(), toReceive = tradeStuff[2].trim();
 
-                        String tradeAttempt;
-//                        output.format("trade: \n");
-//                        output.flush();
-//                        //TODO add method for trading players here
-//                        //print out success of trade to all players
-//                        for (PrintWriter writer : connectedPlayers) {
-//                            writer.println("message: player " + playerNumber + ": " + inputString);
-//                        }
-//                        //display message to server for log
+                            if (players[Integer.parseInt(playerTo) - 1].getTeam().hasCharacter(toReceive)) {
+                                trades.add(new Trade(playerNumber, Integer.parseInt(playerTo), toTrade, toReceive));
+                                for (PrintWriter writer : connectedPlayers) {
+                                    if (writer == players[Integer.parseInt(playerTo) - 1].output) {
+                                        writer.println("message: player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                    }
+                                }
+                            } else {
+                                output.format("trade: player does not have that character");
+                                output.flush();
+                            }
+                        } catch (ArrayIndexOutOfBoundsException bound) {
+                            try {
+                                Trade tempTrade = null;
+                                for (Trade trade : trades) {
+                                    if (trade.getReceiver() == playerNumber) {
+                                        System.out.println("trade init");
+                                        tempTrade = trade;
+                                    }
+                                }
+                                System.out.println("got trade");
+
+                                if (tempTrade != null) {
+                                    if (inputString.toLowerCase().contains("accept")) {
+                                        System.out.println("accepted");
+                                        players[playerNumber - 1].getTeam().trade(tempTrade.getWant(), tempTrade.getOffer());
+                                        System.out.println("trade1");
+                                        players[tempTrade.getSender() - 1].getTeam().trade(tempTrade.getOffer(), tempTrade.getWant());
+                                        System.out.println("trade2");
+                                        for (PrintWriter writer : connectedPlayers) {
+                                            if (writer == players[tempTrade.getSender()].output) {
+                                                writer.println("message: player " + playerNumber + " has accepted your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                            }
+                                        }
+                                    } else if (inputString.toLowerCase().contains("deny")) {
+                                        for (PrintWriter writer : connectedPlayers) {
+                                            if (writer == players[tempTrade.getSender()].output) {
+                                                writer.println("message: player " + playerNumber + " has denied your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                            }
+                                        }
+                                    }
+                                    trades.remove(tempTrade);
+
+                                    System.out.println("finished trade");
+                                }
+                            } catch (NullPointerException notinit) {
+                                output.format("trade: You have no open trades\n");
+                                output.flush();
+                            }
+                        }
+
                         displayMessage("\n" + inputString);
                     }
                     //a standard message from a specific player
@@ -214,8 +261,7 @@ public class Server extends JFrame {
                     input.close();
                     output.close();
                     connection.close();
-                }
-                catch (IOException ioException) {
+                } catch (IOException ioException) {
                     ioException.printStackTrace();
                     System.exit(1);
                 }
