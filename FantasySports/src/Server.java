@@ -71,18 +71,6 @@ public class Server extends JFrame {
                 System.exit(1);
             }
         }
-
-//        gameLock.lock();
-//        try {
-//            //resume player 1
-//            players[0].setSuspended(false);
-//            //wake up player 1's thread
-//            player1Turn.signal();
-//        }
-//        finally {
-//            //unlock game after signalling player 1
-//            gameLock.unlock();
-//        }
     }
 
     private class Player implements Runnable {
@@ -126,6 +114,7 @@ public class Server extends JFrame {
 
                 //temp string to get input from client
                 String inputString = null;
+                boolean draftResult;
                 //add the current player to the list of "outputable" clients
                 connectedPlayers.add(output);
 
@@ -137,17 +126,28 @@ public class Server extends JFrame {
                     }
                     //format message if player wants to draft
                     if (inputString.contains("@draft")) {
-                        output.format("draft: You drafted:  \n");
+                        output.format("draft: You drafted: \n");
                         output.flush();
+                        //display message to other clients
+                        //TODO add method for draft players here
+                        //print out success of draft to all players
+                        for (PrintWriter writer : connectedPlayers) {
+                            writer.println("message: player " + playerNumber + ": " + inputString);
+                        }
                         //display message to server for log
-                        displayMessage(inputString);
+                        displayMessage("\n" + inputString);
                     }
                     //format message if player wants to trade
-                    if (inputString.contains("@trade")) {
+                    else if (inputString.contains("@trade")) {
                         output.format("trade: \n");
                         output.flush();
+                        //TODO add method for trading players here
+                        //print out success of trade to all players
+                        for (PrintWriter writer : connectedPlayers) {
+                            writer.println("message: player " + playerNumber + ": " + inputString);
+                        }
                         //display message to server for log
-                        displayMessage(inputString);
+                        displayMessage("\n" + inputString);
                     }
                     //a standard message from a specific player
                     else {
@@ -155,7 +155,7 @@ public class Server extends JFrame {
                             writer.println("message: player " + playerNumber + ": " + inputString);
                         }
                         //display message to server for log
-                        displayMessage("player " + playerNumber + ": " + inputString);
+                        displayMessage("\nplayer " + playerNumber + ": " + inputString);
                     }
                 }
             }

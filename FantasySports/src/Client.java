@@ -103,15 +103,15 @@ public class Client extends JFrame implements Runnable {
     private void processMessage(String message) {
         if (message.contains("output:")) {
             message = message.replace("output: ", "");
-            displayMessage(message);
+            displayMessage("\n" + message);
         }
         else if (message.contains("message:")) {
             message = message.replace("message: ", "");
-            displayMessage(message);
+            displayMessage("\n" + message);
         }
         else if (message.contains("draft:")) {
             message = message.replace("draft: ", "");
-            displayMessage(message);
+            displayMessage("\n" + message);
         }
     }
 
