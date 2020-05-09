@@ -21,6 +21,15 @@ public class Team {
         return Arrays.toString(teamMates);
     }
 
+    public boolean hasCharacter(String name) {
+        for (Character member : teamMates) {
+            if (member.getCharName().toUpperCase().equals(name.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void trade(String traded, String received) {
         for (int i = 0; i < 6; i++) {
             if (teamMates[i].getCharName().equals(traded)) {
