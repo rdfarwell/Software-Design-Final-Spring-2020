@@ -113,6 +113,10 @@ public class Client extends JFrame implements Runnable {
             message = message.replace("draft: ", "");
             displayMessage("\n" + message);
         }
+        else if (message.contains("trade:")) {
+            message = message.replace("trade: ", "");
+            displayMessage("\n" + message);
+        }
     }
 
     private void displayMessage(final String messageToDisplay) {
