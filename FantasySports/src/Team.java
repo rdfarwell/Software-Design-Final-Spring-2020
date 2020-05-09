@@ -28,6 +28,10 @@ public class Team {
         return Arrays.toString(teamMates);
     }
 
+    public boolean fullTeam() {
+        return onTeam.get(5);
+    }
+
     public boolean hasCharacter(String name) {
         for (Character member : teamMates) {
             if (member.getCharName().toUpperCase().equals(name.toUpperCase())) {

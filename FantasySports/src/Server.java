@@ -133,38 +133,49 @@ public class Server extends JFrame {
 
                         String draftAttempt = inputString.replace("@draft", "").trim().toUpperCase();
 
-                        if (Draft.validName(draftAttempt)) {
-                            if (Draft.draftable(drafted, draftAttempt)) {
-                                drafted[draftCount] = draftAttempt;
-                                draftCount++;
+                        if (!team.fullTeam()) {
+                            if (currentPlayer + 1 == playerNumber) {
+                                if (Draft.validName(draftAttempt)) {
+                                    if (Draft.draftable(drafted, draftAttempt)) {
+                                        drafted[draftCount] = draftAttempt;
+                                        draftCount++;
 
-                                output.format("draft: You drafted: " + draftAttempt + "\n");
-                                output.flush();
+                                        team.addTeamMate(draftAttempt); //add the drafted player to the players team
 
-                                team.addTeamMate(draftAttempt); //add the drafted player to the players team
+                                        output.format("draft: You drafted: " + draftAttempt + "\n");
+                                        output.format("draft: " + team.toString() + "\n");
+                                        output.flush();
 
-                                for (PrintWriter writer : connectedPlayers) {
-                                    writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+                                        currentPlayer = Draft.updateCurrentPlayer(currentPlayer);
+
+                                        for (PrintWriter writer : connectedPlayers) {
+                                            writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+
+                                            if (playerNumber == 1 && team.fullTeam()) {
+                                                writer.println("message: Draft is done!");
+//                                                for (Player p : players) {
+//                                                    writer.println("Player " + p.playerNumber + " " + p.team.toString());
+//                                                }
+                                            }
+                                        }
+                                    } else {
+                                        output.format("draft: Character has already been drafted \n");
+                                        output.flush();
+                                    }
+                                } else {
+                                    output.format("draft: Invalid entry \n");
+                                    output.flush();
                                 }
-                            } else {
-                                output.format("draft: Character has already been drafted \n");
+                            }
+                            else {
+                                output.format("draft: Not your turn \n");
                                 output.flush();
                             }
                         }
                         else {
-                            output.format("draft: Invalid entry \n");
+                            output.format("draft: Your team is full \n");
                             output.flush();
                         }
-
-//                        output.format("draft: You drafted: \n");
-//                        output.flush();
-//                        //display message to other clients
-//                        //TODO add method for draft players here
-//                        //print out success of draft to all players
-//                        for (PrintWriter writer : connectedPlayers) {
-//                            writer.println("message: player " + playerNumber + ": " + inputString);
-//                        }
-//                        //display message to server for log
                         displayMessage("\n" + inputString);
                     }
                     //format message if player wants to trade
