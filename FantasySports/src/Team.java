@@ -6,6 +6,12 @@ public class Team {
     HashMap<Integer, Boolean> onTeam = new HashMap<>();
 
     public Team() {
+        onTeam.put(0, false);
+        onTeam.put(1, false);
+        onTeam.put(2, false);
+        onTeam.put(3, false);
+        onTeam.put(4, false);
+        onTeam.put(5, false);
     }
 
     public void addTeamMate(String name) {
@@ -13,11 +19,12 @@ public class Team {
             if (!onTeam.get(i)) {
                 onTeam.put(i, true);
                 teamMates[i] = new Character(name);
+                break;
             }
         }
     }
 
-    public String getTeam(){
+    public String getTeam() {
         return Arrays.toString(teamMates);
     }
 
@@ -36,5 +43,11 @@ public class Team {
                 teamMates[i] = new Character(received);
             }
         }
+    }
+
+    //TODO bug testing delete before finish
+    @Override
+    public String toString() {
+        return "Team{" + Arrays.toString(teamMates) + '}';
     }
 }

@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class DataBase {
@@ -111,9 +112,10 @@ public class DataBase {
     }
 
     public static String[] getStats(String name) {
-        for (String[] row : data) {
-            if (row[0].toUpperCase().equals(name.toUpperCase())) {
-                return row;
+        readFile();
+        for (int i = 0; i < NUMROWS; i++) {
+            if (data[i][0].toUpperCase().equals(name.toUpperCase())) {
+                return data[i];
             }
         }
         return new String[] {""};

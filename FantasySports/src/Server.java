@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -139,6 +140,8 @@ public class Server extends JFrame {
                             output.format("draft: You drafted: " + draftAttempt + "\n");
                             output.flush();
 
+                            team.addTeamMate(draftAttempt); //add the drafted player to the players team
+
                             for (PrintWriter writer : connectedPlayers) {
                                 writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
                             }
@@ -161,14 +164,16 @@ public class Server extends JFrame {
                     }
                     //format message if player wants to trade
                     else if (inputString.contains("@trade")) {
-                        output.format("trade: \n");
-                        output.flush();
-                        //TODO add method for trading players here
-                        //print out success of trade to all players
-                        for (PrintWriter writer : connectedPlayers) {
-                            writer.println("message: player " + playerNumber + ": " + inputString);
-                        }
-                        //display message to server for log
+
+                        String tradeAttempt;
+//                        output.format("trade: \n");
+//                        output.flush();
+//                        //TODO add method for trading players here
+//                        //print out success of trade to all players
+//                        for (PrintWriter writer : connectedPlayers) {
+//                            writer.println("message: player " + playerNumber + ": " + inputString);
+//                        }
+//                        //display message to server for log
                         displayMessage("\n" + inputString);
                     }
                     //a standard message from a specific player

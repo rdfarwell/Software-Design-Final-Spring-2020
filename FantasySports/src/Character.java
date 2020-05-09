@@ -1,27 +1,32 @@
 public class Character {
     private String charName;
-    private int offense, defense, support;
+    private String offense, defense, support;
 
     public Character(String charName) {
         this.charName = charName;
-        offense = Integer.parseInt(DataBase.getStats(charName)[2]);
-        defense = Integer.parseInt(DataBase.getStats(charName)[3]);
-        support = Integer.parseInt(DataBase.getStats(charName)[4]);
+        offense = DataBase.getStats(charName)[1];
+        defense = DataBase.getStats(charName)[2];
+        support = DataBase.getStats(charName)[3];
     }
 
     public String getCharName() {
         return charName;
     }
 
-    public int getOffense() {
+    public String getOffense() {
         return offense;
     }
 
-    public int getDefense() {
+    public String getDefense() {
         return defense;
     }
 
-    public int getSupport() {
+    public String getSupport() {
         return support;
+    }
+
+    @Override
+    public String toString() {
+        return charName;
     }
 }
