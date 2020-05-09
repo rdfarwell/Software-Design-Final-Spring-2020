@@ -216,13 +216,13 @@ public class Server extends JFrame {
                                         players[tempTrade.getSender() - 1].getTeam().trade(tempTrade.getOffer(), tempTrade.getWant());
                                         System.out.println("trade2");
                                         for (PrintWriter writer : connectedPlayers) {
-                                            if (writer == players[tempTrade.getSender()].output) {
+                                            if (writer == players[tempTrade.getSender() - 1].output) {
                                                 writer.println("message: player " + playerNumber + " has accepted your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }
                                     } else if (inputString.toLowerCase().contains("deny")) {
                                         for (PrintWriter writer : connectedPlayers) {
-                                            if (writer == players[tempTrade.getSender()].output) {
+                                            if (writer == players[tempTrade.getSender() - 1].output) {
                                                 writer.println("message: player " + playerNumber + " has denied your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }

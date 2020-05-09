@@ -34,7 +34,7 @@ public class Team {
 
     public boolean hasCharacter(String name) {
         for (Character member : teamMates) {
-            if (member.getCharName().toUpperCase().equals(name.toUpperCase())) {
+            if (member != null && member.getCharName().toUpperCase().equals(name.toUpperCase())) {
                 return true;
             }
         }
@@ -43,8 +43,9 @@ public class Team {
 
     public void trade(String traded, String received) {
         for (int i = 0; i < 6; i++) {
-            if (teamMates[i].getCharName().equals(traded)) {
+            if (teamMates[i] != null && teamMates[i].getCharName().toUpperCase().equals(traded.toUpperCase())) {
                 teamMates[i] = new Character(received);
+                break;
             }
         }
     }
