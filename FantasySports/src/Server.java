@@ -256,6 +256,18 @@ public class Server extends JFrame {
                             }
                         }
                     }
+
+                    else if (inputString.contains("@help")) {
+                        for (PrintWriter writer : connectedPlayers) {
+                            if (writer == players[playerNumber-1].output) {
+                                writer.println("message: @draft character - drafts the character you entered to your team");
+                                writer.println("message: @trade playerNumber, character you have to trade, character you want - sends playerNumber a message stating you want to trade said characters");
+                                writer.println("message: @trade accept - accepts the trade you were sent");
+                                writer.println("message: @trade deny - denies the trade you were sent");
+                                writer.println("message: @player playerNumber - sends a message to player associated with playerNumber");
+                            }
+                        }
+                    }
                     //a standard message from a specific player
                     else {
                         for (PrintWriter writer : connectedPlayers) {
