@@ -105,12 +105,12 @@ public class Client extends JFrame implements Runnable {
             message = message.replace("output: ", "");
             displayMessage(message);
         }
-        else if (message.contains("draft:")) {
-            message = message.replace("draft: ", "");
-            displayMessage(message);
-        }
         else if (message.contains("message:")) {
             message = message.replace("message: ", "");
+            displayMessage(message);
+        }
+        else if (message.contains("draft:")) {
+            message = message.replace("draft: ", "");
             displayMessage(message);
         }
     }

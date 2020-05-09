@@ -1,10 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Formatter;
-import java.util.Scanner;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
@@ -23,9 +25,9 @@ public class Server extends JFrame {
     private final Condition player2Turn;
     private final Condition player3Turn;
     private final Condition player4Turn;
-    private final boolean draftRound;
-    private boolean gameTime;
+    private boolean gameOver = false;
     private int currentPlayer;
+    private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
 
     public Server() {
         //set title of window
@@ -43,8 +45,6 @@ public class Server extends JFrame {
         player4Turn = gameLock.newCondition();
         //set the starting player
         currentPlayer = 0;
-        //set the game into the draft round
-        draftRound = true;
 
         //set up ServerSocket - port range: 23503 - 23508
         try {
@@ -64,6 +64,13 @@ public class Server extends JFrame {
         add(scroll, BorderLayout.CENTER);
         setSize(500, 300);
         setVisible(true);
+    }
+
+    public void broadcastMessage(int player, String message)  {
+        //send message to all connected players
+        for ( Player p : players )
+            if (!(p.getPlayerNumber() == player))
+                p.sendMessage(player, message);
     }
 
     public void execute() {
@@ -96,8 +103,8 @@ public class Server extends JFrame {
 
     private class Player implements Runnable {
         private final Socket connection;
-        private Scanner input;
-        private Formatter output;
+        private BufferedReader input;
+        private PrintWriter output;
         private final int playerNumber;
         private boolean suspended = true;
 
@@ -107,13 +114,21 @@ public class Server extends JFrame {
 
             //obtain streams from Socket
             try {
-                input = new Scanner(connection.getInputStream());
-                output = new Formatter(connection.getOutputStream());
+                input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                output = new PrintWriter(socket.getOutputStream(), true);
             }
             catch (IOException ioException) {
                 ioException.printStackTrace();
                 System.exit(1);
             }
+        }
+
+        public int getPlayerNumber() {
+            return playerNumber;
+        }
+
+        public void sendMessage(int playerNumber,String message)  {
+            output.format("Player " + playerNumber +  ":" + message);
         }
 
         public void run() {
@@ -125,7 +140,7 @@ public class Server extends JFrame {
 
                 //wait for other players
                 if (playerNumber == 1) {
-                    gameLock.lock();
+//                    gameLock.lock();
 
                     try {
                         while (suspended) {
@@ -149,23 +164,40 @@ public class Server extends JFrame {
                 }
 
                 //temp string to get input from client
-                String inputString;
+                String inputString = null;
+                //add the current player to the list of outputable clients
+                connectedPlayers.add(output);
 
-                //TODO drafting round
-                while (draftRound) {
-                    inputString = input.nextLine();
-
-                    if (inputString.contains("draft:")) {
-                        output.format("draft: You drafted:  \n");
-                        output.flush();
+                while (!gameOver) {
+                    inputString = input.readLine();
+                    if (inputString == null) {
+                        return;
                     }
-                }
-                //TODO: After draft, start normal game time
-                while (gameTime) {
-
+                    for (PrintWriter writer : connectedPlayers) {
+                        writer.println("message: player " + playerNumber + ": " + inputString);
+                    }
+//
+//                    if (inputString.contains("draft:")) {
+//                        output.format("draft: You drafted:  \n");
+//                        output.flush();
+//                        broadcastMessage(playerNumber, inputString);
+//                    }
+//                    if (inputString.contains("message:")) {
+//                        output.format("message: \n");
+//                        output.flush();
+//                        displayMessage(inputString);
+//                        broadcastMessage(playerNumber, inputString);
+//                    }
+//                    else {
+//                        output.format(inputString);
+//                        output.flush();
+//                    }
                 }
             }
-
+            //catch exceptions for input.readLine()
+            catch (IOException e) {
+                e.printStackTrace();
+            }
             //close connection to client
             finally {
                 try {
@@ -200,83 +232,6 @@ public class Server extends JFrame {
                         }
                     }
             );
-        }
-
-        public boolean validateDraftPick(String name, int player) {
-            while (player != currentPlayer) {
-                //lock game to wait for other player to go
-                gameLock.lock();
-
-                //wait for each player's turn
-                try {
-                    if (player == 1) {
-                        player2Turn.await();
-                        player3Turn.await();
-                        player4Turn.await();
-                    }
-                    else if (player == 2) {
-                        player1Turn.await();
-                        player3Turn.await();
-                        player4Turn.await();
-                    }
-                    else if (player == 3) {
-                        player1Turn.await();
-                        player2Turn.await();
-                        player4Turn.await();
-                    }
-                    else if (player == 4) {
-                        player1Turn.await();
-                        player2Turn.await();
-                        player3Turn.await();
-                    }
-                }
-                catch (InterruptedException exception) {
-                    exception.printStackTrace();
-                }
-                finally {
-                    //unlock game after waiting
-                    gameLock.unlock();
-                }
-            }
-
-            //TODO add boolean method to check if player was drafted using the passed name
-            if (!draftedPlayer(name)) {
-                //change player
-                currentPlayer = (currentPlayer + 1) % 4;
-
-                //lock game to signal other player to go
-                gameLock.lock();
-
-                try {
-                    //signal the next player
-                    if (player == 1) {
-                        player2Turn.signal();
-                    }
-                    else if (player == 2) {
-                        player3Turn.signal();
-                    }
-                    else if (player == 3) {
-                        player4Turn.signal();
-                    }
-                    else if (player == 4) {
-                        player1Turn.signal();
-                    }
-                }
-                finally {
-                    //unlock game after signaling
-                    gameLock.unlock();
-                }
-                //let player know that the player they selected was drafted successfully
-                return (true);
-            }
-            else {
-                return (false);
-            }
-        }
-
-        //TODO: determine if a character has been drafted or not
-        public boolean draftedPlayer(String name) {
-            return true;
         }
     }
 }
