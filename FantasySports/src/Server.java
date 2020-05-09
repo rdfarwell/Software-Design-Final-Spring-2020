@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
@@ -23,6 +24,8 @@ public class Server extends JFrame {
     private final Condition playersConnected;
     private boolean gameOver = false;
     private int currentPlayer;
+    private String[] drafted = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+    private int draftCount = 0;
     private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
 
     public Server() {
@@ -79,6 +82,7 @@ public class Server extends JFrame {
         private PrintWriter output;
         private final int playerNumber;
         private boolean suspended = true;
+        private Team team = new Team();
 
         public Player(Socket socket, int number) {
             playerNumber = number + 1; //store this player's number
@@ -114,7 +118,6 @@ public class Server extends JFrame {
 
                 //temp string to get input from client
                 String inputString = null;
-                boolean draftResult;
                 //add the current player to the list of "outputable" clients
                 connectedPlayers.add(output);
 
@@ -125,16 +128,35 @@ public class Server extends JFrame {
                         output.flush();
                     }
                     //format message if player wants to draft
-                    if (inputString.contains("@draft")) {
-                        output.format("draft: You drafted: \n");
-                        output.flush();
-                        //display message to other clients
-                        //TODO add method for draft players here
-                        //print out success of draft to all players
-                        for (PrintWriter writer : connectedPlayers) {
-                            writer.println("message: player " + playerNumber + ": " + inputString);
+                    else if (inputString.contains("@draft")) {
+
+                        String draftAttempt = inputString.replace("@draft", "").trim().toUpperCase();
+
+                        if (Draft.draftable(drafted, draftAttempt)) {
+                            drafted[draftCount] = draftAttempt;
+                            draftCount++;
+
+                            output.format("draft: You drafted: " + draftAttempt + "\n");
+                            output.flush();
+
+                            for (PrintWriter writer : connectedPlayers) {
+                                writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+                            }
                         }
-                        //display message to server for log
+                        else {
+                            output.format("draft: You were unable to draft this character \n");
+                            output.flush();
+                        }
+
+//                        output.format("draft: You drafted: \n");
+//                        output.flush();
+//                        //display message to other clients
+//                        //TODO add method for draft players here
+//                        //print out success of draft to all players
+//                        for (PrintWriter writer : connectedPlayers) {
+//                            writer.println("message: player " + playerNumber + ": " + inputString);
+//                        }
+//                        //display message to server for log
                         displayMessage("\n" + inputString);
                     }
                     //format message if player wants to trade
