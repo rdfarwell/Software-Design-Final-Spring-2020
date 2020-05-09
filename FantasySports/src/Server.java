@@ -133,21 +133,26 @@ public class Server extends JFrame {
 
                         String draftAttempt = inputString.replace("@draft", "").trim().toUpperCase();
 
-                        if (Draft.draftable(drafted, draftAttempt)) {
-                            drafted[draftCount] = draftAttempt;
-                            draftCount++;
+                        if (Draft.validName(draftAttempt)) {
+                            if (Draft.draftable(drafted, draftAttempt)) {
+                                drafted[draftCount] = draftAttempt;
+                                draftCount++;
 
-                            output.format("draft: You drafted: " + draftAttempt + "\n");
-                            output.flush();
+                                output.format("draft: You drafted: " + draftAttempt + "\n");
+                                output.flush();
 
-                            team.addTeamMate(draftAttempt); //add the drafted player to the players team
+                                team.addTeamMate(draftAttempt); //add the drafted player to the players team
 
-                            for (PrintWriter writer : connectedPlayers) {
-                                writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+                                for (PrintWriter writer : connectedPlayers) {
+                                    writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+                                }
+                            } else {
+                                output.format("draft: Character has already been drafted \n");
+                                output.flush();
                             }
                         }
                         else {
-                            output.format("draft: You were unable to draft this character \n");
+                            output.format("draft: Invalid entry \n");
                             output.flush();
                         }
 

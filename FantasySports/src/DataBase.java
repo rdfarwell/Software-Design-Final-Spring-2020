@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class DataBase {
     private static File file = new File("FantasySports/database.csv");
-    private static String[][] data;
+    private static String[][] data = readFile();
     private static final int NUMROWS = 32;
     private static final int NUMDATA = 4;
 
@@ -70,7 +70,7 @@ public class DataBase {
         }
     }
 
-    public static void readFile() {
+    public static String[][] readFile() {
         String[][] output = new String[NUMROWS + 1][NUMDATA];
         try {
             Scanner input = new Scanner(file);
@@ -80,11 +80,11 @@ public class DataBase {
                 output[i] = input.nextLine().split(",");
                 i++;
             }
-            data = output;
         }
         catch (IOException e) {
             System.out.println("Error reading file");
         }
+        return output;
     }
 
     public static String[] getHeaders() {
@@ -112,7 +112,7 @@ public class DataBase {
     }
 
     public static String[] getStats(String name) {
-        readFile();
+        //readFile();
         for (int i = 0; i < NUMROWS; i++) {
             if (data[i][0].toUpperCase().equals(name.toUpperCase())) {
                 return data[i];
