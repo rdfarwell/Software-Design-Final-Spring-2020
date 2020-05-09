@@ -7,12 +7,12 @@ public class DataBase {
     private static File file = new File("FantasySports/database.csv");
     private static String[][] data;
     private static final int NUMROWS = 32;
-    private static final int NUMDATA = 5;
+    private static final int NUMDATA = 4;
 
     public static void addFields() {
         try {
             String[][] rows = new String[NUMROWS][NUMDATA];
-            //                      Name    Role      Offense   Defense     Support
+            //                      Name   Offense   Defense   Support
             rows[0] = new String[] {"Ana", "30", "20", "85"};
             rows[1] = new String[] {"Ashe", "85", "5", "05"};
             rows[2] = new String[] {"Baptiste", "20", "50", "80"};
@@ -48,8 +48,6 @@ public class DataBase {
 
             FileWriter output = new FileWriter(file);
             output.append("Name");
-            output.append(",");
-            output.append("Role");
             output.append(",");
             output.append("Offense");
             output.append(",");
