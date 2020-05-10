@@ -1,9 +1,18 @@
-import javax.xml.crypto.Data;
-import java.util.Arrays;
-
+/**
+ * The Draft.
+ */
 public class Draft {
+    /**
+     * Boolean to flip turns
+     */
     private static boolean flip = false;
 
+    /**
+     * Check if the character is draftable
+     * @param drafted the drafted characters
+     * @param attempt the character to attempt to draft
+     * @return true or false
+     */
     public static boolean draftable(String[] drafted, String attempt) {
         for (String checks : drafted) {
             if (checks.toUpperCase().equals(attempt.toUpperCase())) {
@@ -13,6 +22,11 @@ public class Draft {
         return true;
     }
 
+    /**
+     * Checks for a valid name.
+     * @param attempt the character name
+     * @return true or false
+     */
     public static boolean validName(String attempt) {
         for (String names : DataBase.getData("Name")) {
             if (names.toUpperCase().equals(attempt.toUpperCase())) {
@@ -22,6 +36,11 @@ public class Draft {
         return false;
     }
 
+    /**
+     * Auto drafts a player
+     * @param drafted the drafted characters
+     * @return the name of auto drafted character
+     */
     public static String auto(String[] drafted) {
         String[] names = DataBase.getData("Name");
         String max = "Bastion";
@@ -39,6 +58,11 @@ public class Draft {
         return max;
     }
 
+    /**
+     * Update current players draft.
+     * @param currentPlayer the current player
+     * @return the next player
+     */
     public static int updateCurrentPlayer(int currentPlayer) {
         if (!flip) {
             if (currentPlayer == 3) {

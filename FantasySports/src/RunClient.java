@@ -1,6 +1,13 @@
 import javax.swing.*;
 
+/**
+ * Runs the client.
+ */
 public class RunClient {
+    /**
+     * The entry point of application.
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         Client client;
         // if no command line args
