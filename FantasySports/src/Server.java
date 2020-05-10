@@ -111,6 +111,11 @@ public class Server extends JFrame {
             wins++;
         }
 
+        public int getWins() {
+            return wins;
+        }
+
+
         //run the player thread
         public void run() {
             try {
@@ -265,13 +270,16 @@ public class Server extends JFrame {
                         }
                         playerReady.replace(playerNumber, true);
                         boolean readyToStart = false;
-                        for (int player : playerReady.keySet()) {
-                            if (!playerReady.get(player)) {
-                                readyToStart = false;
-                            } else {
-                                readyToStart = true;
-                            }
+                        if (playerReady.get(1) && playerReady.get(2) && playerReady.get(3) && playerReady.get(4)) {
+                            readyToStart = true;
                         }
+//                        for (int player : playerReady.keySet()) {
+//                            if (!playerReady.get(player)) {
+//                                readyToStart = false;
+//                            } else {
+//                                readyToStart = true;
+//                            }
+//                        }
 
                         if (readyToStart && Score.getCurrentWeek() <= 6) {
                             for (PrintWriter writer : connectedPlayers) {
@@ -336,10 +344,10 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
-                                playerReady.put(0, false);
-                                playerReady.put(1, false);
-                                playerReady.put(2, false);
-                                playerReady.put(3, false);
+                                playerReady.replace(1, false);
+                                playerReady.replace(2, false);
+                                playerReady.replace(3, false);
+                                playerReady.replace(4, false);
                             } else if (Score.getCurrentWeek() == 2 || Score.getCurrentWeek() == 5) {
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[0].output) {
@@ -393,10 +401,10 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
-                                playerReady.put(0, false);
-                                playerReady.put(1, false);
-                                playerReady.put(2, false);
-                                playerReady.put(3, false);
+                                playerReady.replace(1, false);
+                                playerReady.replace(2, false);
+                                playerReady.replace(3, false);
+                                playerReady.replace(4, false);
                             } else if (Score.getCurrentWeek() == 3 || Score.getCurrentWeek() == 6) {
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[0].output) {
@@ -450,16 +458,19 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
-                                playerReady.put(0, false);
-                                playerReady.put(1, false);
-                                playerReady.put(2, false);
-                                playerReady.put(3, false);
+                                playerReady.replace(1, false);
+                                playerReady.replace(2, false);
+                                playerReady.replace(3, false);
+                                playerReady.replace(4, false);
                             }
                         } else if (Score.getCurrentWeek() > 6) {
                             Player[] winners = players;
+                            for(int k = 0 ;k <4; k++){
+                                winners[k].wins = 0;
+                            }
                             for (int i = 0; i < 4; i++) {
                                 for (int j = 0; j < 4; j++) {
-                                    if (players[i].getTeam().getTotalScore() > winners[j].getTeam().getTotalScore()) {
+                                    if (players[i].getWins() > winners[j].getWins()) {
                                         for (int z = 3; z > j; z--) {
                                             winners[z] = winners[z - 1];
                                         }

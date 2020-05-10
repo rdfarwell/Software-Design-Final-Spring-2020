@@ -75,6 +75,10 @@ public class Team {
         weeklyScore = 0;
     }
 
+    public void resetTotalScore() {
+        totalScore = 0;
+    }
+
     public int getTotalScore() {
         return totalScore;
     }
