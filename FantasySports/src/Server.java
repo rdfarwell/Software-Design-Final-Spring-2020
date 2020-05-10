@@ -84,7 +84,13 @@ public class Server extends JFrame {
         private PrintWriter output;
         private final int playerNumber;
         private boolean suspended = true;
+        /**
+         * init of the team class for the player so each player has its own team
+         */
         private Team team = new Team();
+        /**
+         * the number of wins the player has
+         */
         private int wins = 0;
 
         public Player(Socket socket, int number) {
@@ -102,19 +108,34 @@ public class Server extends JFrame {
             playerReady.put(playerNumber, false);
         }
 
+        /**
+         * method getTeam returns the team related to the player
+         * @return Team the players Team
+         */
         public Team getTeam() {
             return team;
         }
 
+        /**
+         * method addWin to add a win to a player
+         */
         public void addWin() {
             wins++;
         }
 
+        /**
+         * method get wins returns the players wins
+         * @return int the players wins
+         */
         public int getWins() {
             return wins;
         }
 
         //run the player thread
+
+        /**
+         * the method that runs the server and takes in the clients input and reads it to allow the correct response, i.e. seeing @draft [character] will read it in and draft that character and add it to the players neam
+         */
         public void run() {
             try {
                 displayMessage("Player " + playerNumber + " connected\n");
