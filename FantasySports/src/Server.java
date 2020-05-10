@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,7 +84,13 @@ public class Server extends JFrame {
         private PrintWriter output;
         private final int playerNumber;
         private boolean suspended = true;
+        /**
+         * init of the team class for the player so each player has its own team
+         */
         private Team team = new Team();
+        /**
+         * the number of wins the player has
+         */
         private int wins = 0;
 
         public Player(Socket socket, int number) {
@@ -103,19 +108,34 @@ public class Server extends JFrame {
             playerReady.put(playerNumber, false);
         }
 
+        /**
+         * method getTeam returns the team related to the player
+         * @return Team the players Team
+         */
         public Team getTeam() {
             return team;
         }
 
+        /**
+         * method addWin to add a win to a player
+         */
         public void addWin() {
             wins++;
         }
 
+        /**
+         * method get wins returns the players wins
+         * @return int the players wins
+         */
         public int getWins() {
             return wins;
         }
 
         //run the player thread
+
+        /**
+         * the method that runs the server and takes in the clients input and reads it to allow the correct response, i.e. seeing @draft [character] will read it in and draft that character and add it to the players neam
+         */
         public void run() {
             try {
                 displayMessage("Player " + playerNumber + " connected\n");
@@ -554,7 +574,7 @@ public class Server extends JFrame {
                             }
                         }
                     } else if (inputString.contains("@replace")) {
-                        //if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
+                        if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
                             String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
                             String[] tradeStuff = replaceAttempt.split(",");
                             String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
@@ -586,10 +606,10 @@ public class Server extends JFrame {
                                     }
                                 }
                             }
-//                        } else {
-//                            output.format("message: Draft is not finished yet.\n");
-//                            output.flush();
-//                        }
+                        } else {
+                            output.format("message: Draft is not finished yet.\n");
+                            output.flush();
+                        }
                     } else if (inputString.contains("@characters")) {
                         output.format("message: " + Arrays.toString(DataBase.getData("Name")) + "\n");
                         output.flush();
@@ -637,6 +657,7 @@ public class Server extends JFrame {
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
                                 writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
+                                writer.println("message: @replace [character to replace, replacement character] - replaces a character on your team with another character");
                                 writer.println("message: @trade [playerNumber, your character offer, character you want] - sends playerNumber a message stating you want to trade said characters");
                                 writer.println("message: @trade accept - accepts the trade you were sent");
                                 writer.println("message: @trade deny - denies the trade you were sent");
