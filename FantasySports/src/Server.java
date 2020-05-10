@@ -715,8 +715,7 @@ public class Server extends JFrame {
                                 if (playerNumberToSearch > 4 || playerNumberToSearch < 1) {
                                     output.format("message: Not valid player\n");
                                     output.flush();
-                                }
-                                else {
+                                } else {
                                     output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch - 1].getTeam().toString() + "\n");
                                     output.flush();
                                 }
@@ -737,7 +736,7 @@ public class Server extends JFrame {
                     } else if (inputString.contains("@turn")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
-                                writer.println("message: It is currently player " + (currentPlayer+1) + "'s turn.");
+                                writer.println("message: It is currently player " + (currentPlayer + 1) + "'s turn.");
                             }
                         }
                     } else if (inputString.contains("@help")) {
