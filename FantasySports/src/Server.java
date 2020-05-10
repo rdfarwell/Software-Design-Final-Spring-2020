@@ -115,6 +115,10 @@ public class Server extends JFrame {
             return wins;
         }
 
+        public void setWins(int set) {
+            wins = set;
+        }
+
 
         //run the player thread
         public void run() {
@@ -302,6 +306,7 @@ public class Server extends JFrame {
                                         if (players[0].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
+                                            System.out.println(players[0].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -314,6 +319,7 @@ public class Server extends JFrame {
                                         if (players[1].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
+                                            System.out.println(players[1].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -326,6 +332,7 @@ public class Server extends JFrame {
                                         if (players[2].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
+                                            System.out.println(players[2].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -338,6 +345,7 @@ public class Server extends JFrame {
                                         if (players[3].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
+                                            System.out.println(players[3].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -464,24 +472,42 @@ public class Server extends JFrame {
                                 playerReady.replace(4, false);
                             }
                         } else if (Score.getCurrentWeek() > 6) {
-                            Player[] winners = players;
-                            for(int k = 0 ;k <4; k++){
-                                winners[k].wins = 0;
+                            int[] needToFlip = new int[]{0,0,0,0};
+                            int[] wins = new int[]{0,0,0,0};
+                            int[] podium = new int[]{0,0,0,0};
+
+                            for  (int p = 0; p < 4; p++) {
+                                needToFlip[p] = players[p].getWins();
                             }
+
+                            Arrays.sort(needToFlip);
+
+                            // flipped since we want descending order, but sort gives ascending
                             for (int i = 0; i < 4; i++) {
-                                boolean position = false;
-                                for (int j = 0; j < 4; j++) {
-                                    if (players[i].getWins() > winners[j].getWins() && !position) {
-                                        for (int z = 3; z > j; z--) {
-                                            winners[z] = winners[z - 1];
-                                        }
-                                        winners[j] = players[i];
-                                        position = true;
-                                    }
+                                wins[3-i] = needToFlip[i];
+                            }
+
+                            boolean p1 = false, p2 = false, p3 = false, p4 = false;
+                            for (int t = 0; t < 4; t++) {
+                                if (wins[t] == players[0].getWins() && !p1) {
+                                    podium[t] = players[0].playerNumber;
+                                    p1 = true;
+                                }
+                                else if (wins[t] == players[1].getWins() && !p2) {
+                                    podium[t] = players[1].playerNumber;
+                                    p2 = true;
+                                }
+                                else if (wins[t] == players[2].getWins() && !p3) {
+                                    podium[t] = players[2].playerNumber;
+                                    p3 = true;
+                                }
+                                else if (wins[t] == players[3].getWins() && !p4) {
+                                    podium[t] = players[3].playerNumber;
+                                    p4 = true;
                                 }
                             }
                             for (PrintWriter writer : connectedPlayers) {
-                                writer.println("message: 1st player " + winners[0].playerNumber + ", 2nd player " + winners[1].playerNumber + ", 3rd player " + winners[2].playerNumber + ", 4th player " + winners[3].playerNumber);
+                                writer.println("message: 1st player " + podium[0] + ", 2nd player " + podium[1] + ", 3rd player " + podium[2] + ", 4th player " + podium[3]);
                             }
                         }
                     }
