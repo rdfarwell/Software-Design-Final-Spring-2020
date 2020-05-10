@@ -516,8 +516,7 @@ public class Server extends JFrame {
                                     writer.println("message: 1st Place: Player " + podium[0] + ", 2nd Place: Player " + podium[1] + ", 3rd Place: Player " + podium[2] + ", 4th Place: Player " + podium[3]);
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             output.format("message: Not all teams are full\n");
                             output.flush();
                         }
@@ -551,25 +550,42 @@ public class Server extends JFrame {
                             }
                         }
                     } else if (inputString.contains("@replace")) {
-                        String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
-                        String[] tradeStuff = replaceAttempt.split(",");
-                        String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
-                        if (players[playerNumber-1].getTeam().hasCharacter(toGive)) {
-                            if (Draft.draftable(drafted, toReceive)) {
-                                players[playerNumber-1].getTeam().trade(toGive,toGive);
-                                for (PrintWriter writer : connectedPlayers){
-                                    if (writer == players[playerNumber-1].output){
-                                        writer.println("message: You have successfully replaced " + toGive + " with " + toReceive + ".");
+                        //if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
+                            String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
+                            String[] tradeStuff = replaceAttempt.split(",");
+                            String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
+                            if (players[playerNumber - 1].getTeam().hasCharacter(toGive)) {
+                                if (Draft.draftable(drafted, toReceive)) {
+                                    players[playerNumber - 1].getTeam().trade(toGive, toReceive);
+                                    for (int i = 0; i < drafted.length; i++) {
+                                        if (drafted[i].equals(toGive)) {
+                                            drafted[i] = toReceive;
+                                        }
+                                    }
+                                    for (PrintWriter writer : connectedPlayers) {
+                                        if (writer == players[playerNumber - 1].output) {
+                                            writer.println("message: You have successfully replaced " + toGive + " with " + toReceive + ".");
+                                            writer.println("message: Your new team " + players[playerNumber - 1].getTeam().toString());
+                                        }
+                                    }
+                                } else {
+                                    for (PrintWriter writer : connectedPlayers) {
+                                        if (writer == players[playerNumber - 1].output) {
+                                            writer.println("message: You cannot draft that player.");
+                                        }
+                                    }
+                                }
+                            } else {
+                                for (PrintWriter writer : connectedPlayers) {
+                                    if (writer == players[playerNumber - 1].output) {
+                                        writer.println("message: You do not have that character on your team.");
                                     }
                                 }
                             }
-                        } else{
-                            for (PrintWriter writer : connectedPlayers){
-                                if (writer == players[playerNumber-1].output){
-                                    writer.println("message: You do not have that character on your team.");
-                                }
-                            }
-                        }
+//                        } else {
+//                            output.format("message: Draft is not finished yet.\n");
+//                            output.flush();
+//                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
@@ -597,7 +613,8 @@ public class Server extends JFrame {
             }
 
             //catch exceptions for input.readLine()
-            catch (IOException e) {
+            catch (
+                    IOException e) {
                 e.printStackTrace();
             }
 
