@@ -17,21 +17,66 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Server extends JFrame {
+    /**
+     * Scroll pane to show all messages to server log.
+     */
     private final JScrollPane scroll;
+    /**
+     * JTextArea nested in scroll pane.
+     */
     private final JTextArea outputArea;
+    /**
+     * Array of all player threads.
+     */
     private final Player[] players = new Player[4];
+    /**
+     * Server-side socket to connect clients.
+     */
     private ServerSocket server;
+    /**
+     * ExecutorService to manage all threads.
+     */
     private final ExecutorService runGame;
+    /**
+     * Lock to locks threads.
+     */
     private final Lock gameLock;
+    /**
+     * Contition to unlock threads.
+     */
     private final Condition playersConnected;
+    /**
+     * True or false if the game still in progress.
+     */
     private boolean gameOver = false;
+    /**
+     * Stores what the current player is in the game state.
+     */
     private int currentPlayer;
+    /**
+     * Stores the name of every character who has been drafted.
+     */
     private String[] drafted = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+    /**
+     * Counter to increment through drafted array.
+     */
     private int draftCount = 0;
+    /**
+     * Stores all trades.
+     */
     private static ArrayList<Trade> trades = new ArrayList<>();
+    /**
+     * Keeps a list of all connected players who can have output sent to their client.
+     */
     private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
+    /**
+     * Keeps a list of all players who are ready for the next stage in the game.
+     */
     private static HashMap<Integer, Boolean> playerReady = new HashMap<Integer, Boolean>();
 
+    /**
+     * Instantiates a new Server.
+     */
     public Server() {
         //set title of window
         super("Fantasy Server");
@@ -63,6 +108,9 @@ public class Server extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Controls the joinging of all players, and creating a new thread for each player.
+     */
     public void execute() {
         //wait for each client to connect
         for (int i = 0; i < players.length; i++) {
@@ -79,19 +127,36 @@ public class Server extends JFrame {
     }
 
     private class Player implements Runnable {
+        /**
+         * The socket that connects the clients to the server.
+         */
         private final Socket connection;
+        /**
+         * Gets input streams from client.
+         */
         private BufferedReader input;
+        /**
+         * Sends outputs streams from server.
+         */
         private PrintWriter output;
+        /**
+         * Stores the number of the player thread (1-4).
+         */
         private final int playerNumber;
         /**
-         * init of the team class for the player so each player has its own team
+         * Creates a new Team object for each player thread.
          */
         private Team team = new Team();
         /**
-         * the number of wins the player has
+         * Stores the number of wins a player has.
          */
         private int wins = 0;
 
+        /**
+         * Instantiates a new Player thread.
+         * @param socket the socket to connect to
+         * @param number the thread number
+         */
         public Player(Socket socket, int number) {
             playerNumber = number + 1; //store this player's number
             connection = socket; //store socket for client
@@ -161,13 +226,14 @@ public class Server extends JFrame {
                 //temp string to get input from client
                 String inputString;
 
+                //Entry point into the main game logic
                 while (!gameOver) {
                     inputString = input.readLine();
                     if (inputString == null) {
                         output.format("\n");
                         output.flush();
                     }
-                    //format message if player wants to draft
+                    //Execute a draft pick for a player
                     else if (inputString.contains("@draft")) {
 
                         String draftAttempt = inputString.replace("@draft", "").trim().toUpperCase();
@@ -219,7 +285,7 @@ public class Server extends JFrame {
                         }
                         displayMessage("\nPlayer " + playerNumber + ": " + inputString);
                     }
-                    //format message if player wants to trade
+                    //Execute trades feature
                     else if (inputString.contains("@trade")) {
                         try {
                             String tradeAttempt = inputString.replace("@trade", "").trim().toUpperCase();
@@ -247,8 +313,6 @@ public class Server extends JFrame {
                                         tempTrade = trade;
                                     }
                                 }
-                                System.out.println("got trade");
-
                                 if (tempTrade != null) {
                                     if (inputString.toLowerCase().contains("accept")) {
                                         System.out.println("accepted");
@@ -271,8 +335,6 @@ public class Server extends JFrame {
                                         }
                                     }
                                     trades.remove(tempTrade);
-
-                                    System.out.println("finished trade");
                                 }
                             } catch (NullPointerException notInitialized) {
                                 output.format("trade: You have no open trades\n");
@@ -282,7 +344,7 @@ public class Server extends JFrame {
                             output.format("message: Not a valid entry\n");
                             output.flush();
                         }
-
+                        //Output to server the trade command by player
                         displayMessage("\nplayer " + playerNumber + ": " + inputString);
                     } else if (inputString.contains("@ready")) {
                         if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
@@ -544,7 +606,7 @@ public class Server extends JFrame {
                             output.flush();
                         }
                     }
-                    // chat feature for sending PM's
+                    //Feature for sending PM's
                     else if (inputString.contains("@player")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (inputString.contains("1") && writer == players[0].output) {
@@ -558,7 +620,9 @@ public class Server extends JFrame {
                             }
                         }
 
-                    } else if (inputString.contains("@stats")) {
+                    }
+                    //Feature for getting the stats of a given character
+                    else if (inputString.contains("@stats")) {
                         String characterName = inputString.replace("@stats", "").trim().toUpperCase();
                         String statsOut;
                         if (Draft.validName(characterName)) {
@@ -572,7 +636,9 @@ public class Server extends JFrame {
                                 writer.println(statsOut);
                             }
                         }
-                    } else if (inputString.contains("@replace")) {
+                    }
+                    //Feature for replacing a character on your team with another available character
+                    else if (inputString.contains("@replace")) {
                         if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
                             String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
                             String[] tradeStuff = replaceAttempt.split(",");
@@ -675,7 +741,7 @@ public class Server extends JFrame {
                             }
                         }
                     }
-                    //a standard message from a specific player
+                    //Send a standard message from a specific player to all players
                     else {
                         for (PrintWriter writer : connectedPlayers) {
                             writer.println("message: Player " + playerNumber + ": " + inputString);
@@ -705,6 +771,10 @@ public class Server extends JFrame {
             }
         }
 
+        /**
+         * Displays messages to the server log.
+         * @param messageToDisplay message to be printed to server log
+         */
         private void displayMessage(final String messageToDisplay) {
             //display message from event-dispatch thread of execution
             SwingUtilities.invokeLater(
