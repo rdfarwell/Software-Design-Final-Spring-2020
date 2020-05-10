@@ -336,6 +336,10 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
+                                playerReady.put(0, false);
+                                playerReady.put(1, false);
+                                playerReady.put(2, false);
+                                playerReady.put(3, false);
                             } else if (Score.getCurrentWeek() == 2 || Score.getCurrentWeek() == 5) {
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[0].output) {
@@ -389,6 +393,10 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
+                                playerReady.put(0, false);
+                                playerReady.put(1, false);
+                                playerReady.put(2, false);
+                                playerReady.put(3, false);
                             } else if (Score.getCurrentWeek() == 3 || Score.getCurrentWeek() == 6) {
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[0].output) {
@@ -442,11 +450,11 @@ public class Server extends JFrame {
                                     }
                                 }
                                 Score.currentWeekPlus();
+                                playerReady.put(0, false);
+                                playerReady.put(1, false);
+                                playerReady.put(2, false);
+                                playerReady.put(3, false);
                             }
-                            playerReady.put(0, false);
-                            playerReady.put(1, false);
-                            playerReady.put(2, false);
-                            playerReady.put(3, false);
                         } else if (Score.getCurrentWeek() > 6) {
                             Player[] winners = players;
                             for (int i = 0; i < 4; i++) {
