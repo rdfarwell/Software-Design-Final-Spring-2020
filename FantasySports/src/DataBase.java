@@ -1,15 +1,32 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * The DataBase.
+ */
 public class DataBase {
+    /**
+     * File that holds the database.
+     */
     private static File file = new File("FantasySports/database.csv");
+    /**
+     * Holds data from csv file.
+     */
     private static String[][] data = readFile();
+    /**
+     * Constant number of rows in database.
+     */
     private static final int NUMROWS = 32;
+    /**
+     * Constants number of columns in database.
+     */
     private static final int NUMDATA = 4;
 
+    /**
+     * Add fields to database.
+     */
     public static void addFields() {
         try {
             String[][] rows = new String[NUMROWS][NUMDATA];
@@ -70,6 +87,10 @@ public class DataBase {
         }
     }
 
+    /**
+     * Reads the csv file.
+     * @return the data from file
+     */
     public static String[][] readFile() {
         String[][] output = new String[NUMROWS + 1][NUMDATA];
         try {
@@ -87,10 +108,19 @@ public class DataBase {
         return output;
     }
 
+    /**
+     * Get headers.
+     * @return the headers of the csv
+     */
     public static String[] getHeaders() {
         return data[0];
     }
 
+    /**
+     * Gets data query.
+     * @param select the selection of data (query)
+     * @return the data
+     */
     public static String[] getData(String select) {
         int saveSpot = 0, i = 0;
         String[] output = new String[NUMROWS];
@@ -111,6 +141,11 @@ public class DataBase {
         return output;
     }
 
+    /**
+     * Get stats of character.
+     * @param name the name of character
+     * @return the stats of the character
+     */
     public static String[] getStats(String name) {
         //readFile();
         for (int i = 0; i < NUMROWS + 1; i++) {

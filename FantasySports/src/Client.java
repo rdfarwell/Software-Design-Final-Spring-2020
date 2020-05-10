@@ -11,21 +11,63 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The type Client.
+ */
 public class Client extends JFrame implements Runnable {
+    /**
+     * The scroll pane to show all messages to client.
+     */
     private final JScrollPane scroll;
+    /**
+     * JTextArea nested in scroll pane.
+     */
     private final JTextArea displayArea;
+    /**
+     * JTextField to take in user input.
+     */
     private final JTextField inputArea;
+    /**
+     * JPanel to hold the scroll pane.
+     */
     private final JPanel topPanel;
+    /**
+     * JPanel to hold the JTextField and JButton.
+     */
     private final JPanel bottomPanel;
+    /**
+     * JButton to send a message typed in the JTextField.
+     */
     private final JButton send;
+    /**
+     * Listener to send message when the button is clicked, or enter key is pressed.
+     */
     private ActionListener buttonListener = new buttonListener();
+    /**
+     * Connection to server.
+     */
     private Socket connection;
+    /**
+     * Gets input streams from server.
+     */
     private BufferedReader input;
+    /**
+     * Sends outputs streams from client.
+     */
     private PrintWriter output;
+    /**
+     * Name of host for server.
+     */
     private final String Host;
+    /**
+     * ID number of the client.
+     */
     private String myID;
-    private final buttonListener hitListener = new buttonListener();
 
+    /**
+     * Instantiates a new Client.
+     * @param host the host
+     */
     public Client(String host) {
         super("Fantasy Overwatch");
         Host = host;
@@ -33,7 +75,7 @@ public class Client extends JFrame implements Runnable {
         bottomPanel = new JPanel(new FlowLayout());
         send = new JButton("Send");
         send.addActionListener(buttonListener);
-        displayArea = new JTextArea(13, 37);
+        displayArea = new JTextArea(13, 41);
         displayArea.setEditable(false);
         inputArea = new JTextField("", 20);
         scroll = new JScrollPane(displayArea);
@@ -52,6 +94,9 @@ public class Client extends JFrame implements Runnable {
         startClient();
     }
 
+    /**
+     * Start client thread.
+     */
     public void startClient() {
         //connect to server and get streams
         try {
@@ -71,6 +116,9 @@ public class Client extends JFrame implements Runnable {
         worker.execute(this); // execute client
     }
 
+    /**
+     * Runs the client thread.
+     */
     public void run() {
         //Get the ID number for the client
         try {
@@ -100,7 +148,10 @@ public class Client extends JFrame implements Runnable {
         }
     }
 
-    //Decipher messages to client
+    /**
+     * Deciphers the messages sent to the client.
+     * @param message the message to be deciphered
+     */
     private void processMessage(String message) {
         if (message.contains("message:")) {
             message = message.replace("message: ", "");
@@ -116,6 +167,10 @@ public class Client extends JFrame implements Runnable {
         }
     }
 
+    /**
+     * Displays deciphered messages to the scroll pane.
+     * @param messageToDisplay the message
+     */
     private void displayMessage(final String messageToDisplay) {
         SwingUtilities.invokeLater(
                 new Runnable() {
@@ -126,6 +181,9 @@ public class Client extends JFrame implements Runnable {
         );
     }
 
+    /**
+     * Sends the client's message to the server on action (click, or enter key pressed).
+     */
     private class buttonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent event) {
