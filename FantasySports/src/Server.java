@@ -493,34 +493,32 @@ public class Server extends JFrame {
                                 }
                             }
 
-                            System.out.println(players[0].getWins());
-                            System.out.println(players[1].getWins());
-                            System.out.println(players[2].getWins());
-                            System.out.println(players[3].getWins());
+                            System.out.println(players[0].getWins() + " " + players[0].getTeam().getTotalScore());
+                            System.out.println(players[1].getWins() + " " + players[1].getTeam().getTotalScore());
+                            System.out.println(players[2].getWins() + " " + players[2].getTeam().getTotalScore());
+                            System.out.println(players[3].getWins() + " " + players[3].getTeam().getTotalScore());
 
                             //TODO: Fucked, tiebreaker
                             for (int j = 0; j < 4; j++) {
                                 for (int k = 0; k < 4; k++) {
                                     if (j != k) {
                                         if (players[j].getWins() == players[k].getWins()) {
-                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore()) {
-                                                int jp = 0, kp = 0;
-                                                for (int x = 0; x < 4; x++) {
-                                                    if (podium[x] == players[j].playerNumber) {
-                                                        jp = x;
-                                                    }
-                                                    if (podium[x] == players[k].playerNumber) {
-                                                        kp = x;
-                                                    }
-                                                    podium[jp] = players[j].playerNumber;
+                                            int jp = 0, kp = 0;
+                                            for (int x = 0; x < 4; x++) {
+                                                if (podium[x] == players[j].playerNumber) {
+                                                    jp = x;
                                                 }
-                                                if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp > jp) {
-                                                    podium[kp] = players[j].playerNumber;
-                                                    podium[jp] = players[k].playerNumber;
-                                                } else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp > kp) {
-                                                    podium[kp] = players[j].playerNumber;
-                                                    podium[jp] = players[k].playerNumber;
+                                                if (podium[x] == players[k].playerNumber) {
+                                                    kp = x;
                                                 }
+                                            }
+                                            System.out.println("jp: " + jp + ", kp: " + kp);
+                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp > jp) {
+                                                podium[kp] = players[j].playerNumber;
+                                                podium[jp] = players[k].playerNumber;
+                                            } else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp > kp) {
+                                                podium[kp] = players[j].playerNumber;
+                                                podium[jp] = players[k].playerNumber;
                                             }
                                         }
                                     }
@@ -529,7 +527,7 @@ public class Server extends JFrame {
                             // TODO: End of fucked
 
                             for (PrintWriter writer : connectedPlayers) {
-                                writer.println("message: 1st place, player " + podium[0] + ", 2nd place, player " + podium[1] + ", 3rd place, player " + podium[2] + ", 4th place, player " + podium[3]);
+                                writer.println("message: 1st Place: Player " + podium[0] + ", 2nd Place: Player " + podium[1] + ", 3rd Place: Player " + podium[2] + ", 4th Place: Player " + podium[3]);
                             }
                         }
                     }
