@@ -295,7 +295,6 @@ public class Server extends JFrame {
                                         if (players[0].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
-                                            // System.out.println(players[0].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -308,7 +307,6 @@ public class Server extends JFrame {
                                         if (players[1].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
-                                            //System.out.println(players[1].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -321,7 +319,6 @@ public class Server extends JFrame {
                                         if (players[2].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
-                                            // System.out.println(players[2].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -334,7 +331,6 @@ public class Server extends JFrame {
                                         if (players[3].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
-                                            //System.out.println(players[3].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
