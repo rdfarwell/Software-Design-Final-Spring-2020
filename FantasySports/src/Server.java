@@ -426,10 +426,15 @@ public class Server extends JFrame {
                             }
                             Score.currentWeekPlus();
                         } else if (Score.getCurrentWeek() > 6) {
-                            Player[] winners = new Player[4];
-                            for (int i = 0; i < 4; i++){
-                                for (int j = 0; j < 4; j++){
-
+                            Player[] winners = players;
+                            for (int i = 0; i < 4; i++) {
+                                for (int j = 0; j < 4; j++) {
+                                    if (players[i].getTeam().getTotalScore() > winners[j].getTeam().getTotalScore()) {
+                                        for (int z = 3; z > j; z--) {
+                                            winners[z] = winners[z-1];
+                                        }
+                                        winners[j] = players[i];
+                                    }
                                 }
                             }
                         }
@@ -456,6 +461,7 @@ public class Server extends JFrame {
                                 writer.println("message: @trade accept - accepts the trade you were sent");
                                 writer.println("message: @trade deny - denies the trade you were sent");
                                 writer.println("message: @player playerNumber - sends a message to player associated with playerNumber");
+                                writer.println("message: @ready - tells the server that you are ready for the current weeks competition to run");
                             }
                         }
                     }
