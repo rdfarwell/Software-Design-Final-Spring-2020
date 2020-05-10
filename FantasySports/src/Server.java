@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -258,6 +259,9 @@ public class Server extends JFrame {
                                 output.format("trade: You have no open trades\n");
                                 output.flush();
                             }
+                        } catch (NumberFormatException | NullPointerException nonValidEntry) {
+                            output.format("message: Not a valid entry\n");
+                            output.flush();
                         }
 
                         displayMessage("\nplayer " + playerNumber + ": " + inputString);
@@ -586,10 +590,50 @@ public class Server extends JFrame {
 //                            output.format("message: Draft is not finished yet.\n");
 //                            output.flush();
 //                        }
+                    } else if (inputString.contains("@characters")) {
+                        output.format("message: " + Arrays.toString(DataBase.getData("Name")) + "\n");
+                        output.flush();
+                    } else if (inputString.contains("@open")) {
+                        StringBuilder charOut = new StringBuilder();
+                        for (String character : DataBase.getData("Name")) {
+                            boolean charHasBeenDrafted = false;
+                            for (String draftedChar : drafted) {
+                                if (draftedChar.toUpperCase().equals(character.toUpperCase())) {
+                                    charHasBeenDrafted = true;
+                                }
+                            }
+                            if (!charHasBeenDrafted) {
+                                charOut.append(character + ", ");
+                            }
+                        }
+                        output.format("message: " + charOut.toString() + "\n");
+                        output.flush();
+                    } else if (inputString.contains("@team")) {
+                        String playerLookup = inputString.replace("@team", "").trim();
+                        int playerNumberToSearch;
+                        if (playerLookup.equals("")) {
+                            playerNumberToSearch = playerNumber;
+                            output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch-1].getTeam().toString() + "\n");
+                            output.flush();
+                        }
+                        else {
+                            try {
+                                playerNumberToSearch = Integer.parseInt(playerLookup);
+                                output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch-1].getTeam().toString() + "\n");
+                                output.flush();
+                            } catch (NumberFormatException | NullPointerException notInt) {
+                                output.format("message: Not a valid entry\n");
+                                output.flush();
+                            }
+                        }
+
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
+                                writer.println("message: @team [playerNumeber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
+                                writer.println("message: @character - Lists all characters in the game");
+                                writer.println("message: @open - Lists all characters that are open to be drafted");
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
                                 writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
