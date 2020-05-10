@@ -548,6 +548,8 @@ public class Server extends JFrame {
                                 writer.println(statsOut);
                             }
                         }
+                    } else if (inputString.contains("@replace")) {
+
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
