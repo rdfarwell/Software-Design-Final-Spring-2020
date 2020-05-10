@@ -161,8 +161,6 @@ public class Server extends JFrame {
                             draftAttempt = Draft.auto(drafted).toUpperCase().trim();
                         }
 
-                        System.out.println(Arrays.toString(drafted));
-
                         if (!team.fullTeam()) {
                             if (currentPlayer + 1 == playerNumber) {
                                 if (Draft.validName(draftAttempt)) {
@@ -183,9 +181,6 @@ public class Server extends JFrame {
 
                                             if (playerNumber == 1 && team.fullTeam()) {
                                                 writer.println("message: Draft is done!");
-//                                                for (Player p : players) {
-//                                                    writer.println("Player " + p.playerNumber + " " + p.team.toString());
-//                                                }
                                             }
                                         }
                                     } else {
@@ -549,9 +544,26 @@ public class Server extends JFrame {
                                 writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("4", "").trim());
                             }
                         }
+
+                    } else if (inputString.contains("@stats")) {
+                        String characterName = inputString.replace("@stats", "").trim().toUpperCase();
+                        String statsOut;
+                        if (Draft.validName(characterName)) {
+                            Character statsChar = new Character(characterName);
+                            statsOut = "message: Stats for " + characterName + ": Offense: " + statsChar.getOffense() + ", Defense: " + statsChar.getSupport() + ", Support: " + statsChar.getSupport();
+                        }
+                        else {
+                            statsOut = "message: Invalid character name";
+                        }
+                        for (PrintWriter writer : connectedPlayers) {
+                            if (writer == players[playerNumber - 1].output) {
+                                writer.println(statsOut);
+                            }
+                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
+                                writer.println("message: @stats character - Gives the stats of the corresponding character");
                                 writer.println("message: @draft character - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
                                 writer.println("message: @trade playerNumber, character you have to trade, character you want - sends playerNumber a message stating you want to trade said characters");
