@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -119,7 +118,6 @@ public class Server extends JFrame {
             wins = set;
         }
 
-
         //run the player thread
         public void run() {
             try {
@@ -139,6 +137,7 @@ public class Server extends JFrame {
                     //Let players know all players are connected and give help message
                     for (PrintWriter writer : connectedPlayers) {
                         writer.println("message: All players connected, type @help for help\n");
+                        writer.println("message: Draft is beginning, Player 1's turn\n");
                     }
                     displayMessage("All Players connected\n");
                 }
@@ -160,7 +159,7 @@ public class Server extends JFrame {
                         if (inputString.contains("auto")) {
                             draftAttempt = Draft.auto(drafted).toUpperCase().trim();
                         }
-
+                        //check to see if player is eligible to draft a character
                         if (!team.fullTeam()) {
                             if (currentPlayer + 1 == playerNumber) {
                                 if (Draft.validName(draftAttempt)) {
@@ -177,10 +176,13 @@ public class Server extends JFrame {
                                         currentPlayer = Draft.updateCurrentPlayer(currentPlayer);
 
                                         for (PrintWriter writer : connectedPlayers) {
-                                            writer.println("message: player " + playerNumber + " drafted: " + draftAttempt);
+                                            writer.println("message: Player " + playerNumber + " drafted: " + draftAttempt);
 
+                                            //Once the draft is complete send message to all players, and inform them to ready up
                                             if (playerNumber == 1 && team.fullTeam()) {
-                                                writer.println("message: Draft is done!");
+                                                writer.println("message: Draft is done! Type @ready to start");
+                                                //display message to server log that draft is done
+                                                displayMessage("\nDraft is done, waiting for players to ready up");
                                             }
                                         }
                                     } else {
@@ -199,7 +201,7 @@ public class Server extends JFrame {
                             output.format("draft: Your team is full \n");
                             output.flush();
                         }
-                        displayMessage("\nplayer " + playerNumber + ": " + inputString);
+                        displayMessage("\nPlayer " + playerNumber + ": " + inputString);
                     }
                     //format message if player wants to trade
                     else if (inputString.contains("@trade")) {
@@ -212,12 +214,12 @@ public class Server extends JFrame {
                                 trades.add(new Trade(playerNumber, Integer.parseInt(playerTo), toTrade, toReceive));
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[Integer.parseInt(playerTo) - 1].output) {
-                                        writer.println("message: player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
-                                        displayMessage("player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                        writer.println("message: Player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                        displayMessage("\nPlayer " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
                                     }
                                 }
                             } else {
-                                output.format("trade: player does not have that character");
+                                output.format("trade: Player does not have that character");
                                 output.flush();
                             }
                         } catch (ArrayIndexOutOfBoundsException bound) {
@@ -240,15 +242,15 @@ public class Server extends JFrame {
                                         System.out.println("trade2");
                                         for (PrintWriter writer : connectedPlayers) {
                                             if (writer == players[tempTrade.getSender() - 1].output) {
-                                                writer.println("message: player " + playerNumber + " has accepted your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
-                                                displayMessage("player " + playerNumber + " has accepted trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                writer.println("message: Player " + playerNumber + " has accepted your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                displayMessage("\nPlayer " + playerNumber + " has accepted trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }
                                     } else if (inputString.toLowerCase().contains("deny")) {
                                         for (PrintWriter writer : connectedPlayers) {
                                             if (writer == players[tempTrade.getSender() - 1].output) {
-                                                writer.println("message: player " + playerNumber + " has denied your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
-                                                displayMessage("player " + playerNumber + " has denied trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                writer.println("message: Player " + playerNumber + " has denied your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                displayMessage("\nPlayer " + playerNumber + " has denied trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }
                                     }
@@ -285,7 +287,7 @@ public class Server extends JFrame {
                                 writer.println("message: Week " + Score.getCurrentWeek() + " has begun");
                             }
                             //Display message to server log
-                            displayMessage("Week " + Score.getCurrentWeek() + " has begun");
+                            displayMessage("\nWeek " + Score.getCurrentWeek() + " has begun");
                             for (Player player : players) {
                                 player.getTeam().resetWeeklyScore();
                                 player.getTeam().addScore();
@@ -563,13 +565,13 @@ public class Server extends JFrame {
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
-                                writer.println("message: @stats character - Gives the stats of the corresponding character");
-                                writer.println("message: @draft character - drafts the character you entered to your team");
+                                writer.println("message: @stats [character] - Gives the stats of the corresponding character");
+                                writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
-                                writer.println("message: @trade playerNumber, character you have to trade, character you want - sends playerNumber a message stating you want to trade said characters");
+                                writer.println("message: @trade [playerNumber, your character offer, character you want] - sends playerNumber a message stating you want to trade said characters");
                                 writer.println("message: @trade accept - accepts the trade you were sent");
                                 writer.println("message: @trade deny - denies the trade you were sent");
-                                writer.println("message: @player playerNumber - sends a message to player associated with playerNumber");
+                                writer.println("message: @player [playerNumber] - sends a message to player associated with playerNumber");
                                 writer.println("message: @ready - tells the server that you are ready for the current weeks competition to run");
                             }
                         }
@@ -577,10 +579,10 @@ public class Server extends JFrame {
                     //a standard message from a specific player
                     else {
                         for (PrintWriter writer : connectedPlayers) {
-                            writer.println("message: player " + playerNumber + ": " + inputString);
+                            writer.println("message: Player " + playerNumber + ": " + inputString);
                         }
                         //display message to server for log
-                        displayMessage("\nplayer " + playerNumber + ": " + inputString);
+                        displayMessage("\nPlayer " + playerNumber + ": " + inputString);
                     }
                 }
             }
