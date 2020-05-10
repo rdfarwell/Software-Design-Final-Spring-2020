@@ -235,7 +235,7 @@ public class Server extends JFrame {
                                     }
                                 }
                             } else {
-                                output.format("trade: Player does not have that character");
+                                output.format("trade: Player does not have that character\n");
                                 output.flush();
                             }
                         } catch (ArrayIndexOutOfBoundsException bound) {
@@ -578,7 +578,7 @@ public class Server extends JFrame {
                             String[] tradeStuff = replaceAttempt.split(",");
                             String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
                             if (players[playerNumber - 1].getTeam().hasCharacter(toGive)) {
-                                if (Draft.draftable(drafted, toReceive)) {
+                                if (Draft.validName(toReceive) && Draft.draftable(drafted, toReceive)) {
                                     players[playerNumber - 1].getTeam().trade(toGive, toReceive);
                                     for (int i = 0; i < drafted.length; i++) {
                                         if (drafted[i].equals(toGive)) {
@@ -646,12 +646,21 @@ public class Server extends JFrame {
                                 output.flush();
                             }
                         }
-
+                    } else if (inputString.contains("@score")) {
+                        for (PrintWriter writer : connectedPlayers) {
+                            if (writer == players[playerNumber - 1].output) {
+                                writer.println("message: Player 1 Scores: Wins: " + players[0].getWins() + ", Total Score: " + players[0].getTeam().getTotalScore());
+                                writer.println("message: Player 2 Scores: Wins: " + players[1].getWins() + ", Total Score: " + players[1].getTeam().getTotalScore());
+                                writer.println("message: Player 3 Scores: Wins: " + players[2].getWins() + ", Total Score: " + players[2].getTeam().getTotalScore());
+                                writer.println("message: Player 4 Scores: Wins: " + players[3].getWins() + ", Total Score: " + players[3].getTeam().getTotalScore());
+                            }
+                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
                                 writer.println("message: @team [playerNumber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
+                                writer.println("message: @score - Lists each player, their win total, and overall score");
                                 writer.println("message: @character - Lists all characters in the game");
                                 writer.println("message: @open - Lists all characters that are open to be drafted");
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
