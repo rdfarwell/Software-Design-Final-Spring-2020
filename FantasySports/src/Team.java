@@ -64,7 +64,7 @@ public class Team {
 
     public void addScore() {
         for (Character character : teamMates){
-            score += Score.getScore(character);
+            score = Score.getScore(character);
             charScores.put(character,score);
         }
         weeklyScore += score;
