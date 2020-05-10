@@ -118,6 +118,8 @@ public class Server extends JFrame {
                 //send player's ID number
                 output.format("%s\n", playerNumber);
                 output.flush();
+                //add the current player to the list of "outputable" clients
+                connectedPlayers.add(output);
 
                 //lock game on first join
                 if (playerNumber == 1) {
@@ -125,13 +127,15 @@ public class Server extends JFrame {
                 }
                 //display all players connected
                 else if (playerNumber == 4) {
+                    //Let players know all players are connected and give help message
+                    for (PrintWriter writer : connectedPlayers) {
+                        writer.println("message: All players connected, type @help for help\n");
+                    }
                     displayMessage("All Players connected\n");
                 }
 
                 //temp string to get input from client
                 String inputString = null;
-                //add the current player to the list of "outputable" clients
-                connectedPlayers.add(output);
 
                 while (!gameOver) {
                     inputString = input.readLine();
@@ -191,7 +195,7 @@ public class Server extends JFrame {
                             output.format("draft: Your team is full \n");
                             output.flush();
                         }
-                        displayMessage("\n" + inputString);
+                        displayMessage("\nplayer " + playerNumber + ": " + inputString);
                     }
                     //format message if player wants to trade
                     else if (inputString.contains("@trade")) {
@@ -205,6 +209,7 @@ public class Server extends JFrame {
                                 for (PrintWriter writer : connectedPlayers) {
                                     if (writer == players[Integer.parseInt(playerTo) - 1].output) {
                                         writer.println("message: player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                        displayMessage("player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
                                     }
                                 }
                             } else {
@@ -232,12 +237,14 @@ public class Server extends JFrame {
                                         for (PrintWriter writer : connectedPlayers) {
                                             if (writer == players[tempTrade.getSender() - 1].output) {
                                                 writer.println("message: player " + playerNumber + " has accepted your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                displayMessage("player " + playerNumber + " has accepted trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }
                                     } else if (inputString.toLowerCase().contains("deny")) {
                                         for (PrintWriter writer : connectedPlayers) {
                                             if (writer == players[tempTrade.getSender() - 1].output) {
                                                 writer.println("message: player " + playerNumber + " has denied your trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
+                                                displayMessage("player " + playerNumber + " has denied trade of, " + tempTrade.getOffer() + " for " + tempTrade.getWant() + " \n ");
                                             }
                                         }
                                     }
@@ -251,7 +258,7 @@ public class Server extends JFrame {
                             }
                         }
 
-                        displayMessage("\n" + inputString);
+                        displayMessage("\nplayer " + playerNumber + ": " + inputString);
                     } else if (inputString.contains("@ready")) {
                         for (PrintWriter writer : connectedPlayers) {
                             writer.println("message: Player " + playerNumber + " has readied up");
@@ -270,6 +277,8 @@ public class Server extends JFrame {
                             for (PrintWriter writer : connectedPlayers) {
                                 writer.println("message: Week " + Score.getCurrentWeek() + " has begun");
                             }
+                            //Display message to server log
+                            displayMessage("Week " + Score.getCurrentWeek() + " has begun");
                             for (Player player : players) {
                                 player.getTeam().resetWeeklyScore();
                                 player.getTeam().addScore();
