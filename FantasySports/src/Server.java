@@ -295,7 +295,7 @@ public class Server extends JFrame {
                                         if (players[0].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
-                                            System.out.println(players[0].getWins()); // TODO
+                                           // System.out.println(players[0].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -308,7 +308,7 @@ public class Server extends JFrame {
                                         if (players[1].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
-                                            System.out.println(players[1].getWins()); // TODO
+                                            //System.out.println(players[1].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -321,7 +321,7 @@ public class Server extends JFrame {
                                         if (players[2].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
-                                            System.out.println(players[2].getWins()); // TODO
+                                           // System.out.println(players[2].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -334,7 +334,7 @@ public class Server extends JFrame {
                                         if (players[3].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
-                                            System.out.println(players[3].getWins()); // TODO
+                                            //System.out.println(players[3].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -496,28 +496,20 @@ public class Server extends JFrame {
                                 }
                             }
 
+                            System.out.println(players[0].getWins());
+                            System.out.println(players[1].getWins());
+                            System.out.println(players[2].getWins());
+                            System.out.println(players[3].getWins());
+
                             //TODO: Fucked, tiebreaker
                             for (int j = 0; j < 4; j++) {
                                 for (int k = 0; k < 4; k++) {
                                     if (j != k) {
                                         if (players[j].getWins() == players[k].getWins()) {
-                                            int jp = 0, kp = 0;
-                                            for (int x = 0; x < 4; x++) {
-                                                if (podium[x] == players[j].playerNumber) {
-                                                    jp = x;
-                                                }
-                                                if (podium[x] == players[k].playerNumber) {
-                                                    kp = x;
-                                                }
-                                            }
-                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp > jp) {
-                                                podium[kp] = players[j].playerNumber;
-                                                podium[jp] = players[k].playerNumber;
-                                            }
-                                            else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp > kp) {
-                                                podium[kp] = players[j].playerNumber;
-                                                podium[jp] = players[k].playerNumber;
-                                            }
+                                           if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore()){
+                                               podium[j] = players[k].playerNumber;
+                                               podium[k] = players[j].playerNumber;
+                                           }
                                         }
                                     }
                                 }
@@ -525,7 +517,7 @@ public class Server extends JFrame {
                             // TODO: End of fucked
 
                             for (PrintWriter writer : connectedPlayers) {
-                                writer.println("message: 1st player " + podium[0] + ", 2nd player " + podium[1] + ", 3rd player " + podium[2] + ", 4th player " + podium[3]);
+                                writer.println("message: 1st place, player " + podium[0] + ", 2nd place, player " + podium[1] + ", 3rd place, player " + podium[2] + ", 4th place, player " + podium[3]);
                             }
                         }
                     }
