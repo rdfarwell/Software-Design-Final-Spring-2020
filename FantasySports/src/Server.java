@@ -443,6 +443,10 @@ public class Server extends JFrame {
                                 }
                                 Score.currentWeekPlus();
                             }
+                            playerReady.put(0, false);
+                            playerReady.put(1, false);
+                            playerReady.put(2, false);
+                            playerReady.put(3, false);
                         } else if (Score.getCurrentWeek() > 6) {
                             Player[] winners = players;
                             for (int i = 0; i < 4; i++) {
