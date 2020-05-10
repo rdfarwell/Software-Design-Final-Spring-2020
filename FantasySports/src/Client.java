@@ -38,7 +38,6 @@ public class Client extends JFrame implements Runnable {
         displayArea = new JTextArea(13, 35);
         displayArea.setEditable(false);
         inputArea = new JTextField("", 20);
-//        inputArea.setEditable(false); //make initially false until server accepts all users
         scroll = new JScrollPane(displayArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         leftPanel.add(scroll, BorderLayout.WEST);
@@ -47,10 +46,12 @@ public class Client extends JFrame implements Runnable {
         subPanel.add(rightPanel, BorderLayout.EAST);
         subPanel.add(send, BorderLayout.CENTER);
         add(subPanel, BorderLayout.SOUTH);
+        //adds the ability to press the enter key to "click" the send button
+        getRootPane().setDefaultButton(send);
+
         setSize(393, 295);
         setResizable(false);
         setVisible(true);
-
         startClient();
     }
 
@@ -93,19 +94,15 @@ public class Client extends JFrame implements Runnable {
         while (true) {
             try {
                 processMessage(input.readLine());
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
     private void processMessage(String message) {
-        if (message.contains("output:")) {
-            message = message.replace("output: ", "");
-            displayMessage("\n" + message);
-        }
-        else if (message.contains("message:")) {
+        if (message.contains("message:")) {
             message = message.replace("message: ", "");
             displayMessage("\n" + message);
         }
@@ -134,6 +131,7 @@ public class Client extends JFrame implements Runnable {
         public void actionPerformed(ActionEvent event) {
             output.format(inputArea.getText() + "\n");
             output.flush();
+            inputArea.setText("");
         }
     }
 }
