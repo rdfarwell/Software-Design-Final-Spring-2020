@@ -33,7 +33,7 @@ public class Client extends JFrame implements Runnable {
         bottomPanel = new JPanel(new FlowLayout());
         send = new JButton("Send");
         send.addActionListener(buttonListener);
-        displayArea = new JTextArea(13, 41);
+        displayArea = new JTextArea(13, 37);
         displayArea.setEditable(false);
         inputArea = new JTextField("", 20);
         scroll = new JScrollPane(displayArea);

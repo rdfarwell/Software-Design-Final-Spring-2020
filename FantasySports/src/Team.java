@@ -7,6 +7,7 @@ public class Team {
     private HashMap<Character, Integer> charScores = new HashMap<>();
     private int totalScore = 0;
     private int weeklyScore = 0;
+    private int score = 0;
 
     public Team() {
         onTeam.put(0, false);
@@ -56,13 +57,12 @@ public class Team {
     public String getCharScore(){
         StringBuilder listOfCharScores = new StringBuilder();
         for (Character character : charScores.keySet()){
-            listOfCharScores.append(", ").append(character).append(charScores.get(character).toString());
+            listOfCharScores.append(", ").append(character).append(" ").append(charScores.get(character).toString());
         }
         return listOfCharScores.toString();
     }
 
     public void addScore() {
-        int score = 0;
         for (Character character : teamMates){
             score += Score.getScore(character);
             charScores.put(character,score);
