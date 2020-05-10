@@ -274,14 +274,6 @@ public class Server extends JFrame {
                         if (playerReady.get(1) && playerReady.get(2) && playerReady.get(3) && playerReady.get(4)) {
                             readyToStart = true;
                         }
-//                        for (int player : playerReady.keySet()) {
-//                            if (!playerReady.get(player)) {
-//                                readyToStart = false;
-//                            } else {
-//                                readyToStart = true;
-//                            }
-//                        }
-
                         if (readyToStart && Score.getCurrentWeek() <= 6) {
                             for (PrintWriter writer : connectedPlayers) {
                                 writer.println("message: Week " + Score.getCurrentWeek() + " has begun");
@@ -509,17 +501,22 @@ public class Server extends JFrame {
                                 for (int k = 0; k < 4; k++) {
                                     if (j != k) {
                                         if (players[j].getWins() == players[k].getWins()) {
-                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore()) {
-                                                int jp = 0, kp = 0;
-                                                for (int x = 0; x < 4; x++) {
-                                                    if (podium[x] == players[j].playerNumber) {
-                                                        jp = x;
-                                                    }
-                                                    if (podium[x] == players[k].playerNumber) {
-                                                        kp = x;
-                                                    }
+                                            int jp = 0, kp = 0;
+                                            for (int x = 0; x < 4; x++) {
+                                                if (podium[x] == players[j].playerNumber) {
+                                                    jp = x;
                                                 }
-                                                podium[jp] = players[j].playerNumber;
+                                                if (podium[x] == players[k].playerNumber) {
+                                                    kp = x;
+                                                }
+                                            }
+                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp > jp) {
+                                                podium[kp] = players[j].playerNumber;
+                                                podium[jp] = players[k].playerNumber;
+                                            }
+                                            else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp > kp) {
+                                                podium[kp] = players[j].playerNumber;
+                                                podium[jp] = players[k].playerNumber;
                                             }
                                         }
                                     }
