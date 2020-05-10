@@ -154,6 +154,7 @@ public class Server extends JFrame {
 
         /**
          * Instantiates a new Player thread.
+         *
          * @param socket the socket to connect to
          * @param number the thread number
          */
@@ -174,6 +175,7 @@ public class Server extends JFrame {
 
         /**
          * method getTeam returns the team related to the player
+         *
          * @return Team the players Team
          */
         public Team getTeam() {
@@ -189,6 +191,7 @@ public class Server extends JFrame {
 
         /**
          * method get wins returns the players wins
+         *
          * @return int the players wins
          */
         public int getWins() {
@@ -699,13 +702,12 @@ public class Server extends JFrame {
                         int playerNumberToSearch;
                         if (playerLookup.equals("")) {
                             playerNumberToSearch = playerNumber;
-                            output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch-1].getTeam().toString() + "\n");
+                            output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch - 1].getTeam().toString() + "\n");
                             output.flush();
-                        }
-                        else {
+                        } else {
                             try {
                                 playerNumberToSearch = Integer.parseInt(playerLookup);
-                                output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch-1].getTeam().toString() + "\n");
+                                output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch - 1].getTeam().toString() + "\n");
                                 output.flush();
                             } catch (NumberFormatException | NullPointerException notInt) {
                                 output.format("message: Not a valid entry\n");
@@ -721,10 +723,17 @@ public class Server extends JFrame {
                                 writer.println("message: Player 4 Scores: Wins: " + players[3].getWins() + ", Total Score: " + players[3].getTeam().getTotalScore());
                             }
                         }
+                    } else if (inputString.contains("@turn")) {
+                        for (PrintWriter writer : connectedPlayers) {
+                            if (writer == players[playerNumber - 1].output) {
+                                writer.println("message: It is currently player " + (currentPlayer+1) + "'s turn.");
+                            }
+                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
+                                writer.println("message: @turn - sends a message to all players whose turn it currently is");
                                 writer.println("message: @team [playerNumber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
                                 writer.println("message: @score - Lists each player, their win total, and overall score");
                                 writer.println("message: @character - Lists all characters in the game");
@@ -773,6 +782,7 @@ public class Server extends JFrame {
 
         /**
          * Displays messages to the server log.
+         *
          * @param messageToDisplay message to be printed to server log
          */
         private void displayMessage(final String messageToDisplay) {
