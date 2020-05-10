@@ -33,7 +33,7 @@ public class Client extends JFrame implements Runnable {
         bottomPanel = new JPanel(new FlowLayout());
         send = new JButton("Send");
         send.addActionListener(buttonListener);
-        displayArea = new JTextArea(13, 35);
+        displayArea = new JTextArea(13, 41);
         displayArea.setEditable(false);
         inputArea = new JTextField("", 20);
         scroll = new JScrollPane(displayArea);
@@ -46,7 +46,7 @@ public class Client extends JFrame implements Runnable {
         //adds the ability to press the enter key to "click" the send button
         getRootPane().setDefaultButton(send);
 
-        setSize(393, 295);
+        setSize(450, 295);
         setResizable(false);
         setVisible(true);
         startClient();
