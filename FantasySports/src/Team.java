@@ -4,6 +4,7 @@ import java.util.HashMap;
 public class Team {
     private Character[] teamMates = new Character[6];
     private HashMap<Integer, Boolean> onTeam = new HashMap<>();
+    private HashMap<Character, Integer> charScores = new HashMap<>();
     private int totalScore = 0;
     private int weeklyScore = 0;
 
@@ -52,8 +53,20 @@ public class Team {
         }
     }
 
+    public String getCharScore(){
+        StringBuilder listOfCharScores = new StringBuilder();
+        for (Character character : charScores.keySet()){
+            listOfCharScores.append(character).append(charScores.get(character).toString());
+        }
+        return listOfCharScores.toString();
+    }
 
-    public void addScore(int score) {
+    public void addScore() {
+        int score = 0;
+        for (Character character : teamMates){
+            score += Score.getScore(character);
+            charScores.put(character,score);
+        }
         weeklyScore += score;
         totalScore += score;
     }

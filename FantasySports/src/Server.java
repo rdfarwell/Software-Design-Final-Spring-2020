@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,7 @@ public class Server extends JFrame {
     private int draftCount = 0;
     private static ArrayList<Trade> trades = new ArrayList<>();
     private static final HashSet<PrintWriter> connectedPlayers = new HashSet<PrintWriter>();
+    private static HashMap<Integer, Boolean> playerReady = new HashMap<Integer, Boolean>();
 
     public Server() {
         //set title of window
@@ -84,6 +86,7 @@ public class Server extends JFrame {
         private final int playerNumber;
         private boolean suspended = true;
         private Team team = new Team();
+        private int wins = 0;
 
         public Player(Socket socket, int number) {
             playerNumber = number + 1; //store this player's number
@@ -97,10 +100,15 @@ public class Server extends JFrame {
                 ioException.printStackTrace();
                 System.exit(1);
             }
+            playerReady.put(playerNumber, false);
         }
 
-        public Team getTeam(){
+        public Team getTeam() {
             return team;
+        }
+
+        public void addWin() {
+            wins++;
         }
 
         //run the player thread
@@ -238,28 +246,211 @@ public class Server extends JFrame {
                         }
 
                         displayMessage("\n" + inputString);
+                    } else if (inputString.contains("@ready")) {
+                        playerReady.replace(playerNumber, true);
+                        boolean readyToStart = false;
+                        for (int player : playerReady.keySet()) {
+                            if (!playerReady.get(player)) {
+                                readyToStart = false;
+                            } else {
+                                readyToStart = true;
+                            }
+                        }
+
+                        if (readyToStart && Score.getCurrentWeek() <= 6) {
+                            for (PrintWriter writer : connectedPlayers) {
+                                writer.println("Week " + Score.getCurrentWeek() + " has begun");
+                            }
+                            for (Player player : players) {
+                                player.getTeam().resetWeeklyScore();
+                                player.getTeam().addScore();
+                            }
+                            if (Score.getCurrentWeek() == 1 || Score.getCurrentWeek() == 4) {
+                                for (PrintWriter writer : connectedPlayers) {
+                                    if (writer == players[0].output) {
+                                        writer.println("You are facing player 2, with team, " + players[1].getTeam());
+                                        writer.println("Your team scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[0].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[1].getTeam().getCharScore());
+                                        if (players[0].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[0].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[1].output) {
+                                        writer.println("You are facing player 1, with team, " + players[0].getTeam());
+                                        writer.println("Your team scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[1].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[0].getTeam().getCharScore());
+                                        if (players[1].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[1].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[2].output) {
+                                        writer.println("You are facing player 4, with team, " + players[3].getTeam());
+                                        writer.println("Your team scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[2].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[3].getTeam().getCharScore());
+                                        if (players[2].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[2].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[3].output) {
+                                        writer.println("You are facing player 3, with team, " + players[2].getTeam());
+                                        writer.println("Your team scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[3].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[2].getTeam().getCharScore());
+                                        if (players[3].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[3].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    }
+                                }
+                                Score.currentWeekPlus();
+                            } else if (Score.getCurrentWeek() == 2 || Score.getCurrentWeek() == 5) {
+                                for (PrintWriter writer : connectedPlayers) {
+                                    if (writer == players[0].output) {
+                                        writer.println("You are facing player 3, with team, " + players[2].getTeam());
+                                        writer.println("Your team scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[0].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[2].getTeam().getCharScore());
+                                        if (players[0].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[0].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[1].output) {
+                                        writer.println("You are facing player 4, with team, " + players[3].getTeam());
+                                        writer.println("Your team scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[1].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[3].getTeam().getCharScore());
+                                        if (players[1].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[1].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[2].output) {
+                                        writer.println("You are facing player 1, with team, " + players[0].getTeam());
+                                        writer.println("Your team scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[2].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[0].getTeam().getCharScore());
+                                        if (players[2].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[2].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[3].output) {
+                                        writer.println("You are facing player 2, with team, " + players[1].getTeam());
+                                        writer.println("Your team scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[3].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[1].getTeam().getCharScore());
+                                        if (players[3].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[3].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    }
+                                }
+                                Score.currentWeekPlus();
+                            } else if (Score.getCurrentWeek() == 3 || Score.getCurrentWeek() == 6) {
+                                for (PrintWriter writer : connectedPlayers) {
+                                    if (writer == players[0].output) {
+                                        writer.println("You are facing player 4, with team, " + players[3].getTeam());
+                                        writer.println("Your team scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[0].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[3].getTeam().getCharScore());
+                                        if (players[0].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[0].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[1].output) {
+                                        writer.println("You are facing player 3, with team, " + players[2].getTeam());
+                                        writer.println("Your team scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[1].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[2].getTeam().getCharScore());
+                                        if (players[1].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[1].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[2].output) {
+                                        writer.println("You are facing player 2, with team, " + players[1].getTeam());
+                                        writer.println("Your team scored " + players[2].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[2].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[1].getTeam().getCharScore());
+                                        if (players[2].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[2].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    } else if (writer == players[3].output) {
+                                        writer.println("You are facing player 1, with team, " + players[0].getTeam());
+                                        writer.println("Your team scored " + players[3].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually your characters scored " + players[3].getTeam().getCharScore());
+                                        writer.println("Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
+                                        writer.println("Individually their characters scored " + players[0].getTeam().getCharScore());
+                                        if (players[3].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                            writer.println("You won this week");
+                                            players[3].addWin();
+                                        } else {
+                                            writer.println("You lost this week");
+                                        }
+                                    }
+                                }
+                            }
+                            Score.currentWeekPlus();
+                        } else if (Score.getCurrentWeek() > 6) {
+                            Player[] winners = new Player[4];
+                            for (int i = 0; i < 4; i++){
+                                for (int j = 0; j < 4; j++){
+
+                                }
+                            }
+                        }
                     }
+
                     // chat feature for sending PM's
                     else if (inputString.contains("@player")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (inputString.contains("1") && writer == players[0].output) {
                                 writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("1", "").trim());
-                            }
-                            else if (inputString.contains("2") && writer == players[1].output) {
+                            } else if (inputString.contains("2") && writer == players[1].output) {
                                 writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("2", "").trim());
-                            }
-                            else if (inputString.contains("3") && writer == players[2].output) {
+                            } else if (inputString.contains("3") && writer == players[2].output) {
                                 writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("3", "").trim());
-                            }
-                            else if (inputString.contains("4") && writer == players[3].output) {
+                            } else if (inputString.contains("4") && writer == players[3].output) {
                                 writer.println("message: From player " + playerNumber + ": " + inputString.replace("@player", "").replace("4", "").trim());
                             }
                         }
-                    }
-
-                    else if (inputString.contains("@help")) {
+                    } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
-                            if (writer == players[playerNumber-1].output) {
+                            if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: @draft character - drafts the character you entered to your team");
                                 writer.println("message: @trade playerNumber, character you have to trade, character you want - sends playerNumber a message stating you want to trade said characters");
                                 writer.println("message: @trade accept - accepts the trade you were sent");

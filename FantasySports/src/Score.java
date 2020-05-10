@@ -12,4 +12,12 @@ public class Score {
         score += Integer.parseInt(character.getSupport()) * (Math.ceil(rand.nextInt(101)/10.0));
         return score;
     }
+
+    public static void currentWeekPlus(){
+        currentWeek ++;
+    }
+
+    public static int getCurrentWeek(){
+        return currentWeek;
+    }
 }
