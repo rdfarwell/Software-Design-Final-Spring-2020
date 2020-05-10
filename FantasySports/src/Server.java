@@ -614,6 +614,7 @@ public class Server extends JFrame {
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
                                 writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
+                                writer.println("message: @replace [character to replace, replacement character] - replaces a character on your team with another character");
                                 writer.println("message: @trade [playerNumber, your character offer, character you want] - sends playerNumber a message stating you want to trade said characters");
                                 writer.println("message: @trade accept - accepts the trade you were sent");
                                 writer.println("message: @trade deny - denies the trade you were sent");
