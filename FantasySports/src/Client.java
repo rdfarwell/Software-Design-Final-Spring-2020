@@ -15,9 +15,8 @@ public class Client extends JFrame implements Runnable {
     private final JScrollPane scroll;
     private final JTextArea displayArea;
     private final JTextField inputArea;
-    private final JPanel leftPanel;
-    private final JPanel rightPanel;
-    private final JPanel subPanel;
+    private final JPanel topPanel;
+    private final JPanel bottomPanel;
     private final JButton send;
     private ActionListener buttonListener = new buttonListener();
     private Socket connection;
@@ -30,9 +29,8 @@ public class Client extends JFrame implements Runnable {
     public Client(String host) {
         super("Fantasy Overwatch");
         Host = host;
-        leftPanel = new JPanel();
-        rightPanel = new JPanel();
-        subPanel = new JPanel(new FlowLayout());
+        topPanel = new JPanel();
+        bottomPanel = new JPanel(new FlowLayout());
         send = new JButton("Send");
         send.addActionListener(buttonListener);
         displayArea = new JTextArea(13, 35);
@@ -40,12 +38,11 @@ public class Client extends JFrame implements Runnable {
         inputArea = new JTextField("", 20);
         scroll = new JScrollPane(displayArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        leftPanel.add(scroll, BorderLayout.WEST);
-        rightPanel.add(inputArea, BorderLayout.EAST);
-        add(leftPanel, BorderLayout.WEST);
-        subPanel.add(rightPanel, BorderLayout.EAST);
-        subPanel.add(send, BorderLayout.CENTER);
-        add(subPanel, BorderLayout.SOUTH);
+        topPanel.add(scroll, BorderLayout.WEST);
+        add(topPanel, BorderLayout.WEST);
+        bottomPanel.add(inputArea, BorderLayout.EAST);
+        bottomPanel.add(send, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
         //adds the ability to press the enter key to "click" the send button
         getRootPane().setDefaultButton(send);
 
@@ -75,12 +72,14 @@ public class Client extends JFrame implements Runnable {
     }
 
     public void run() {
+        //Get the ID number for the client
         try {
             myID = input.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        //Display to client what player they are
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
@@ -101,6 +100,7 @@ public class Client extends JFrame implements Runnable {
         }
     }
 
+    //Decipher messages to client
     private void processMessage(String message) {
         if (message.contains("message:")) {
             message = message.replace("message: ", "");
