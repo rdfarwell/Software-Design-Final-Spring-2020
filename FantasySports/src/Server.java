@@ -1,5 +1,3 @@
-import sun.awt.windows.WPrinterJob;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
