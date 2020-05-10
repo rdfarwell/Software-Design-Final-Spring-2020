@@ -2,8 +2,25 @@
  * The Character object.
  */
 public class Character {
+    /**
+     * Name of the Character.
+     */
     private String charName;
-    private String offense, defense, support;
+
+    /**
+     * Offense stat of the character
+     */
+    private String offense;
+
+    /**
+     * Defense stat of the character
+     */
+    private String defense;
+
+    /**
+     * Support stat of the character
+     */
+    private String support;
 
     /**
      * Instantiates a new Character object.

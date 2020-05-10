@@ -4,7 +4,14 @@ import java.util.Random;
  * The Score of each team.
  */
 public class Score {
+    /**
+     * Current week of the season.
+     */
     private static int currentWeek = 1;
+
+    /**
+     * Random number used in determining score.
+     */
     private static Random rand = new Random();
 
     /**

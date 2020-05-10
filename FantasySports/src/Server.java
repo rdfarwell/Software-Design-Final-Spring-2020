@@ -342,6 +342,9 @@ public class Server extends JFrame {
                                 output.format("trade: You have no open trades\n");
                                 output.flush();
                             }
+                        } catch (NumberFormatException | NullPointerException nonValidEntry) {
+                            output.format("message: Not a valid entry\n");
+                            output.flush();
                         }
                         //Output to server the trade command by player
                         displayMessage("\nplayer " + playerNumber + ": " + inputString);
@@ -674,12 +677,13 @@ public class Server extends JFrame {
                             output.format("message: Draft is not finished yet.\n");
                             output.flush();
                         }
-                    }
-                    //Feature for getting a list of all available chat commands
-                    else if (inputString.contains("@help")) {
+                    } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
+                                writer.println("message: @team [playerNumber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
+                                writer.println("message: @character - Lists all characters in the game");
+                                writer.println("message: @open - Lists all characters that are open to be drafted");
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
                                 writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");

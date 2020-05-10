@@ -57,14 +57,6 @@ public class Team {
     }
 
     /**
-     * Gets teammates.
-     * @return the team
-     */
-    public String getTeam() {
-        return Arrays.toString(teamMates);
-    }
-
-    /**
      * Checks if team is full.
      * @return true or false
      */
