@@ -469,12 +469,14 @@ public class Server extends JFrame {
                                 winners[k].wins = 0;
                             }
                             for (int i = 0; i < 4; i++) {
+                                boolean position = false;
                                 for (int j = 0; j < 4; j++) {
-                                    if (players[i].getWins() > winners[j].getWins()) {
+                                    if (players[i].getWins() > winners[j].getWins() && !position) {
                                         for (int z = 3; z > j; z--) {
                                             winners[z] = winners[z - 1];
                                         }
                                         winners[j] = players[i];
+                                        position = true;
                                     }
                                 }
                             }
