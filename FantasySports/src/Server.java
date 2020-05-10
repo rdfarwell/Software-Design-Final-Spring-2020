@@ -537,68 +537,73 @@ public class Server extends JFrame {
                                     playerReady.replace(2, false);
                                     playerReady.replace(3, false);
                                     playerReady.replace(4, false);
-                                }
-                            } else if (Score.getCurrentWeek() > 6) {
-                                int[] needToFlip = new int[]{0, 0, 0, 0};
-                                int[] wins = new int[]{0, 0, 0, 0};
-                                int[] podium = new int[]{0, 0, 0, 0};
 
-                                for (int p = 0; p < 4; p++) {
-                                    needToFlip[p] = players[p].getWins();
-                                }
+                                    if (Score.getCurrentWeek() > 6) {
+                                        int[] needToFlip = new int[]{0, 0, 0, 0};
+                                        int[] wins = new int[]{0, 0, 0, 0};
+                                        int[] podium = new int[]{0, 0, 0, 0};
 
-                                Arrays.sort(needToFlip);
+                                        for (int p = 0; p < 4; p++) {
+                                            needToFlip[p] = players[p].getWins();
+                                        }
 
-                                // flipped since we want descending order, but sort gives ascending
-                                for (int i = 0; i < 4; i++) {
-                                    wins[3 - i] = needToFlip[i];
-                                }
+                                        Arrays.sort(needToFlip);
 
-                                boolean p1 = false, p2 = false, p3 = false, p4 = false;
-                                for (int t = 0; t < 4; t++) {
-                                    if (wins[t] == players[0].getWins() && !p1) {
-                                        podium[t] = players[0].playerNumber;
-                                        p1 = true;
-                                    } else if (wins[t] == players[1].getWins() && !p2) {
-                                        podium[t] = players[1].playerNumber;
-                                        p2 = true;
-                                    } else if (wins[t] == players[2].getWins() && !p3) {
-                                        podium[t] = players[2].playerNumber;
-                                        p3 = true;
-                                    } else if (wins[t] == players[3].getWins() && !p4) {
-                                        podium[t] = players[3].playerNumber;
-                                        p4 = true;
-                                    }
-                                }
+                                        // flipped since we want descending order, but sort gives ascending
+                                        for (int i = 0; i < 4; i++) {
+                                            wins[3 - i] = needToFlip[i];
+                                        }
 
-                                // Tiebreaker
-                                for (int j = 0; j < 4; j++) {
-                                    for (int k = 0; k < 4; k++) {
-                                        if (j != k) {
-                                            if (players[j].getWins() == players[k].getWins()) {
-                                                int jp = 0, kp = 0;
-                                                for (int x = 0; x < 4; x++) {
-                                                    if (podium[x] == players[j].playerNumber) {
-                                                        jp = x;
+                                        boolean p1 = false, p2 = false, p3 = false, p4 = false;
+                                        for (int t = 0; t < 4; t++) {
+                                            if (wins[t] == players[0].getWins() && !p1) {
+                                                podium[t] = players[0].playerNumber;
+                                                p1 = true;
+                                            } else if (wins[t] == players[1].getWins() && !p2) {
+                                                podium[t] = players[1].playerNumber;
+                                                p2 = true;
+                                            } else if (wins[t] == players[2].getWins() && !p3) {
+                                                podium[t] = players[2].playerNumber;
+                                                p3 = true;
+                                            } else if (wins[t] == players[3].getWins() && !p4) {
+                                                podium[t] = players[3].playerNumber;
+                                                p4 = true;
+                                            }
+                                        }
+
+                                        // Tiebreaker
+                                        for (int j = 0; j < 4; j++) {
+                                            for (int k = 0; k < 4; k++) {
+                                                if (j != k) {
+                                                    if (players[j].getWins() == players[k].getWins()) {
+                                                        int jp = 0, kp = 0;
+                                                        for (int x = 0; x < 4; x++) {
+                                                            if (podium[x] == players[j].playerNumber) {
+                                                                jp = x;
+                                                            }
+                                                            if (podium[x] == players[k].playerNumber) {
+                                                                kp = x;
+                                                            }
+                                                        }
+                                                        if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp < jp) {
+                                                            podium[kp] = players[j].playerNumber;
+                                                            podium[jp] = players[k].playerNumber;
+                                                        } else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp < kp) {
+                                                            podium[kp] = players[j].playerNumber;
+                                                            podium[jp] = players[k].playerNumber;
+                                                        }
                                                     }
-                                                    if (podium[x] == players[k].playerNumber) {
-                                                        kp = x;
-                                                    }
-                                                }
-                                                if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp < jp) {
-                                                    podium[kp] = players[j].playerNumber;
-                                                    podium[jp] = players[k].playerNumber;
-                                                } else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp < kp) {
-                                                    podium[kp] = players[j].playerNumber;
-                                                    podium[jp] = players[k].playerNumber;
                                                 }
                                             }
                                         }
-                                    }
-                                }
 
-                                for (PrintWriter writer : connectedPlayers) {
-                                    writer.println("message: 1st Place: Player " + podium[0] + ", 2nd Place: Player " + podium[1] + ", 3rd Place: Player " + podium[2] + ", 4th Place: Player " + podium[3]);
+                                        for (PrintWriter writer : connectedPlayers) {
+                                            writer.println();
+                                            writer.println("Results:");
+                                            writer.println("message: 1st Place: Player " + podium[0] + ", 2nd Place: Player " + podium[1] + ", 3rd Place: Player " + podium[2] + ", 4th Place: Player " + podium[3]);
+                                        }
+                                    }
+
                                 }
                             }
                         } else {
@@ -705,8 +710,14 @@ public class Server extends JFrame {
                         else {
                             try {
                                 playerNumberToSearch = Integer.parseInt(playerLookup);
-                                output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch-1].getTeam().toString() + "\n");
-                                output.flush();
+                                if (playerNumberToSearch > 4 || playerNumberToSearch < 1) {
+                                    output.format("message: Not valid player\n");
+                                    output.flush();
+                                }
+                                else {
+                                    output.format("message: Player " + playerNumberToSearch + "`s Team: " + players[playerNumberToSearch - 1].getTeam().toString() + "\n");
+                                    output.flush();
+                                }
                             } catch (NumberFormatException | NullPointerException notInt) {
                                 output.format("message: Not a valid entry\n");
                                 output.flush();
