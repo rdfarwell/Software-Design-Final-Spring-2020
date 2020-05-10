@@ -295,7 +295,7 @@ public class Server extends JFrame {
                                         if (players[0].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
-                                           // System.out.println(players[0].getWins()); // TODO
+                                            // System.out.println(players[0].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -321,7 +321,7 @@ public class Server extends JFrame {
                                         if (players[2].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
-                                           // System.out.println(players[2].getWins()); // TODO
+                                            // System.out.println(players[2].getWins()); // TODO
                                         } else {
                                             writer.println("message: You lost this week");
                                         }
@@ -461,11 +461,11 @@ public class Server extends JFrame {
                                 playerReady.replace(4, false);
                             }
                         } else if (Score.getCurrentWeek() > 6) {
-                            int[] needToFlip = new int[]{0,0,0,0};
-                            int[] wins = new int[]{0,0,0,0};
-                            int[] podium = new int[]{0,0,0,0};
+                            int[] needToFlip = new int[]{0, 0, 0, 0};
+                            int[] wins = new int[]{0, 0, 0, 0};
+                            int[] podium = new int[]{0, 0, 0, 0};
 
-                            for  (int p = 0; p < 4; p++) {
+                            for (int p = 0; p < 4; p++) {
                                 needToFlip[p] = players[p].getWins();
                             }
 
@@ -473,7 +473,7 @@ public class Server extends JFrame {
 
                             // flipped since we want descending order, but sort gives ascending
                             for (int i = 0; i < 4; i++) {
-                                wins[3-i] = needToFlip[i];
+                                wins[3 - i] = needToFlip[i];
                             }
 
                             boolean p1 = false, p2 = false, p3 = false, p4 = false;
@@ -481,16 +481,13 @@ public class Server extends JFrame {
                                 if (wins[t] == players[0].getWins() && !p1) {
                                     podium[t] = players[0].playerNumber;
                                     p1 = true;
-                                }
-                                else if (wins[t] == players[1].getWins() && !p2) {
+                                } else if (wins[t] == players[1].getWins() && !p2) {
                                     podium[t] = players[1].playerNumber;
                                     p2 = true;
-                                }
-                                else if (wins[t] == players[2].getWins() && !p3) {
+                                } else if (wins[t] == players[2].getWins() && !p3) {
                                     podium[t] = players[2].playerNumber;
                                     p3 = true;
-                                }
-                                else if (wins[t] == players[3].getWins() && !p4) {
+                                } else if (wins[t] == players[3].getWins() && !p4) {
                                     podium[t] = players[3].playerNumber;
                                     p4 = true;
                                 }
@@ -506,10 +503,25 @@ public class Server extends JFrame {
                                 for (int k = 0; k < 4; k++) {
                                     if (j != k) {
                                         if (players[j].getWins() == players[k].getWins()) {
-                                           if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore()){
-                                               podium[j] = players[k].playerNumber;
-                                               podium[k] = players[j].playerNumber;
-                                           }
+                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore()) {
+                                                int jp = 0, kp = 0;
+                                                for (int x = 0; x < 4; x++) {
+                                                    if (podium[x] == players[j].playerNumber) {
+                                                        jp = x;
+                                                    }
+                                                    if (podium[x] == players[k].playerNumber) {
+                                                        kp = x;
+                                                    }
+                                                    podium[jp] = players[j].playerNumber;
+                                                }
+                                                if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore() && kp > jp) {
+                                                    podium[kp] = players[j].playerNumber;
+                                                    podium[jp] = players[k].playerNumber;
+                                                } else if (players[k].getTeam().getTotalScore() > players[j].getTeam().getTotalScore() && jp > kp) {
+                                                    podium[kp] = players[j].playerNumber;
+                                                    podium[jp] = players[k].playerNumber;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -542,8 +554,7 @@ public class Server extends JFrame {
                         if (Draft.validName(characterName)) {
                             Character statsChar = new Character(characterName);
                             statsOut = "message: Stats for " + characterName + ": Offense: " + statsChar.getOffense() + ", Defense: " + statsChar.getSupport() + ", Support: " + statsChar.getSupport();
-                        }
-                        else {
+                        } else {
                             statsOut = "message: Invalid character name";
                         }
                         for (PrintWriter writer : connectedPlayers) {
