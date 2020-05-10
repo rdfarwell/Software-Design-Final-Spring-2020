@@ -550,7 +550,7 @@ public class Server extends JFrame {
                             }
                         }
                     } else if (inputString.contains("@replace")) {
-                        //if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
+                        if (players[0].getTeam().fullTeam() && players[1].getTeam().fullTeam() && players[2].getTeam().fullTeam() && players[3].getTeam().fullTeam()) {
                             String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
                             String[] tradeStuff = replaceAttempt.split(",");
                             String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
@@ -582,10 +582,10 @@ public class Server extends JFrame {
                                     }
                                 }
                             }
-//                        } else {
-//                            output.format("message: Draft is not finished yet.\n");
-//                            output.flush();
-//                        }
+                        } else {
+                            output.format("message: Draft is not finished yet.\n");
+                            output.flush();
+                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
