@@ -1,3 +1,5 @@
+import sun.awt.windows.WPrinterJob;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -519,7 +521,6 @@ public class Server extends JFrame {
                             }
                         }
                     }
-
                     // chat feature for sending PM's
                     else if (inputString.contains("@player")) {
                         for (PrintWriter writer : connectedPlayers) {
@@ -549,7 +550,25 @@ public class Server extends JFrame {
                             }
                         }
                     } else if (inputString.contains("@replace")) {
-
+                        String replaceAttempt = inputString.replace("@replace", "").trim().toUpperCase();
+                        String[] tradeStuff = replaceAttempt.split(",");
+                        String toGive = tradeStuff[0].trim(), toReceive = tradeStuff[1].trim();
+                        if (players[playerNumber-1].getTeam().hasCharacter(toGive)) {
+                            if (Draft.draftable(drafted, toReceive)) {
+                                players[playerNumber-1].getTeam().trade(toGive,toGive);
+                                for (PrintWriter writer : connectedPlayers){
+                                    if (writer == players[playerNumber-1].output){
+                                        writer.println("message: You have successfully replaced " + toGive + " with " + toReceive + ".");
+                                    }
+                                }
+                            }
+                        } else{
+                            for (PrintWriter writer : connectedPlayers){
+                                if (writer == players[playerNumber-1].output){
+                                    writer.println("message: You do not have that character on your team.");
+                                }
+                            }
+                        }
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
