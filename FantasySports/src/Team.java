@@ -56,7 +56,7 @@ public class Team {
     public String getCharScore(){
         StringBuilder listOfCharScores = new StringBuilder();
         for (Character character : charScores.keySet()){
-            listOfCharScores.append(character).append(charScores.get(character).toString());
+            listOfCharScores.append(", ").append(character).append(charScores.get(character).toString());
         }
         return listOfCharScores.toString();
     }

@@ -46,7 +46,7 @@ public class Client extends JFrame implements Runnable {
         //adds the ability to press the enter key to "click" the send button
         getRootPane().setDefaultButton(send);
 
-        setSize(393, 295);
+        setSize(450, 295);
         setResizable(false);
         setVisible(true);
         startClient();

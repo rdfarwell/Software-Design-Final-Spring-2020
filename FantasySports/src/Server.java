@@ -282,7 +282,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[0].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[1].getTeam().getCharScore());
-                                        if (players[0].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                        if (players[0].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
                                         } else {
@@ -294,7 +294,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[1].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[0].getTeam().getCharScore());
-                                        if (players[1].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                        if (players[1].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
                                         } else {
@@ -306,7 +306,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[2].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[3].getTeam().getCharScore());
-                                        if (players[2].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                        if (players[2].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
                                         } else {
@@ -318,7 +318,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[3].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[2].getTeam().getCharScore());
-                                        if (players[3].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                        if (players[3].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
                                         } else {
@@ -335,7 +335,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[0].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[2].getTeam().getCharScore());
-                                        if (players[0].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                        if (players[0].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
                                         } else {
@@ -347,7 +347,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[1].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[3].getTeam().getCharScore());
-                                        if (players[1].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                        if (players[1].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
                                         } else {
@@ -359,7 +359,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[2].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[0].getTeam().getCharScore());
-                                        if (players[2].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                        if (players[2].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
                                         } else {
@@ -371,7 +371,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[3].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[1].getTeam().getCharScore());
-                                        if (players[3].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                        if (players[3].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
                                         } else {
@@ -388,7 +388,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[0].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[3].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[3].getTeam().getCharScore());
-                                        if (players[0].getTeam().getWeeklyScore() < players[3].getTeam().getWeeklyScore()) {
+                                        if (players[0].getTeam().getWeeklyScore() > players[3].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[0].addWin();
                                         } else {
@@ -400,7 +400,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[1].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[2].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[2].getTeam().getCharScore());
-                                        if (players[1].getTeam().getWeeklyScore() < players[2].getTeam().getWeeklyScore()) {
+                                        if (players[1].getTeam().getWeeklyScore() > players[2].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[1].addWin();
                                         } else {
@@ -412,7 +412,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[2].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[1].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[1].getTeam().getCharScore());
-                                        if (players[2].getTeam().getWeeklyScore() < players[1].getTeam().getWeeklyScore()) {
+                                        if (players[2].getTeam().getWeeklyScore() > players[1].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[2].addWin();
                                         } else {
@@ -424,7 +424,7 @@ public class Server extends JFrame {
                                         writer.println("message: Individually your characters scored " + players[3].getTeam().getCharScore());
                                         writer.println("message: Your opponent scored " + players[0].getTeam().getWeeklyScore() + " this week");
                                         writer.println("message: Individually their characters scored " + players[0].getTeam().getCharScore());
-                                        if (players[3].getTeam().getWeeklyScore() < players[0].getTeam().getWeeklyScore()) {
+                                        if (players[3].getTeam().getWeeklyScore() > players[0].getTeam().getWeeklyScore()) {
                                             writer.println("message: You won this week");
                                             players[3].addWin();
                                         } else {
@@ -432,8 +432,8 @@ public class Server extends JFrame {
                                         }
                                     }
                                 }
+                                Score.currentWeekPlus();
                             }
-                            Score.currentWeekPlus();
                         } else if (Score.getCurrentWeek() > 6) {
                             Player[] winners = players;
                             for (int i = 0; i < 4; i++) {
@@ -447,7 +447,7 @@ public class Server extends JFrame {
                                 }
                             }
                             for (PrintWriter writer : connectedPlayers) {
-                                writer.println("message: 1st " + winners[0] + ", 2nd " + winners[1] + ", 3rd " + winners[2] + ", 4th " + winners[3]);
+                                writer.println("message: 1st player " + winners[0].playerNumber + ", 2nd player " + winners[1].playerNumber + ", 3rd player " + winners[2].playerNumber + ", 4th player " + winners[3].playerNumber);
                             }
                         }
                     }
