@@ -493,6 +493,7 @@ public class Server extends JFrame {
                                 }
                             }
 
+                            // Tiebreaker
                             for (int j = 0; j < 4; j++) {
                                 for (int k = 0; k < 4; k++) {
                                     if (j != k) {
@@ -555,6 +556,7 @@ public class Server extends JFrame {
                     } else if (inputString.contains("@help")) {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
+                                writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
                                 writer.println("message: @draft [character] - drafts the character you entered to your team");
                                 writer.println("message: @draft auto - automatically picks a character for you");
