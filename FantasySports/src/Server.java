@@ -651,7 +651,7 @@ public class Server extends JFrame {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: Typing in the entry bar (not using a code below), will send a message to all players");
-                                writer.println("message: @team [playerNumeber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
+                                writer.println("message: @team [playerNumber] - Lists the team associated with playerNumber (leaving playerNumber blank returns your team)");
                                 writer.println("message: @character - Lists all characters in the game");
                                 writer.println("message: @open - Lists all characters that are open to be drafted");
                                 writer.println("message: @stats [character] - Gives the stats of the corresponding character");
