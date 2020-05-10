@@ -3,7 +3,7 @@
  */
 public class Draft {
     /**
-     * Boolean to flip turns
+     * Boolean to flip drafting order to create a fair draft
      */
     private static boolean flip = false;
 
