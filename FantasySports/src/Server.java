@@ -506,6 +506,30 @@ public class Server extends JFrame {
                                     p4 = true;
                                 }
                             }
+
+                            //TODO: Fucked, tiebreaker
+                            for (int j = 0; j < 4; j++) {
+                                for (int k = 0; k < 4; k++) {
+                                    if (j != k) {
+                                        if (players[j].getWins() == players[k].getWins()) {
+                                            if (players[j].getTeam().getTotalScore() > players[k].getTeam().getTotalScore()) {
+                                                int jp = 0, kp = 0;
+                                                for (int x = 0; x < 4; x++) {
+                                                    if (podium[x] == players[j].playerNumber) {
+                                                        jp = x;
+                                                    }
+                                                    if (podium[x] == players[k].playerNumber) {
+                                                        kp = x;
+                                                    }
+                                                }
+                                                podium[jp] = players[j].playerNumber;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // TODO: End of fucked
+
                             for (PrintWriter writer : connectedPlayers) {
                                 writer.println("message: 1st player " + podium[0] + ", 2nd player " + podium[1] + ", 3rd player " + podium[2] + ", 4th player " + podium[3]);
                             }
