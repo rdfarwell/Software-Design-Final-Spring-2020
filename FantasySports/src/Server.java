@@ -144,6 +144,12 @@ public class Server extends JFrame {
 
                         String draftAttempt = inputString.replace("@draft", "").trim().toUpperCase();
 
+                        if (inputString.contains("auto")) {
+                            draftAttempt = Draft.auto(drafted).toUpperCase().trim();
+                        }
+
+                        System.out.println(Arrays.toString(drafted));
+
                         if (!team.fullTeam()) {
                             if (currentPlayer + 1 == playerNumber) {
                                 if (Draft.validName(draftAttempt)) {
@@ -457,6 +463,7 @@ public class Server extends JFrame {
                         for (PrintWriter writer : connectedPlayers) {
                             if (writer == players[playerNumber - 1].output) {
                                 writer.println("message: @draft character - drafts the character you entered to your team");
+                                writer.println("message: @draft auto - automatically picks a character for you");
                                 writer.println("message: @trade playerNumber, character you have to trade, character you want - sends playerNumber a message stating you want to trade said characters");
                                 writer.println("message: @trade accept - accepts the trade you were sent");
                                 writer.println("message: @trade deny - denies the trade you were sent");

@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.util.Arrays;
 
 public class Draft {
@@ -19,6 +20,23 @@ public class Draft {
             }
         }
         return false;
+    }
+
+    public static String auto(String[] drafted) {
+        String[] names = DataBase.getData("Name");
+        String max = "Bastion";
+        String[] maxStats = DataBase.getStats(max.toUpperCase());
+        for (String name : names) {
+            if (draftable(drafted, name)) {
+                String[] stats = DataBase.getStats(name.toUpperCase());
+                if (Integer.parseInt(stats[1]) + Integer.parseInt(stats[2]) + Integer.parseInt(stats[3]) > Integer.parseInt(maxStats[1]) + Integer.parseInt(maxStats[2]) + Integer.parseInt(maxStats[3])) {
+                    max = name;
+                    maxStats = stats;
+                }
+            }
+        }
+
+        return max;
     }
 
     public static int updateCurrentPlayer(int currentPlayer) {

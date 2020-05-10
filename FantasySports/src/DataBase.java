@@ -104,8 +104,8 @@ public class DataBase {
             }
         }
 
-        for (int x = 0; x < NUMROWS; x++) {
-            output[x] = data[x+1][saveSpot];
+        for (int x = 1; x < NUMROWS + 1; x++) {
+            output[x-1] = data[x][saveSpot];
         }
 
         return output;
@@ -113,7 +113,7 @@ public class DataBase {
 
     public static String[] getStats(String name) {
         //readFile();
-        for (int i = 0; i < NUMROWS; i++) {
+        for (int i = 0; i < NUMROWS + 1; i++) {
             if (data[i][0].toUpperCase().equals(name.toUpperCase())) {
                 return data[i];
             }
