@@ -83,7 +83,6 @@ public class Server extends JFrame {
         private BufferedReader input;
         private PrintWriter output;
         private final int playerNumber;
-        private boolean suspended = true;
         /**
          * init of the team class for the player so each player has its own team
          */
@@ -620,10 +619,11 @@ public class Server extends JFrame {
                             for (String draftedChar : drafted) {
                                 if (draftedChar.toUpperCase().equals(character.toUpperCase())) {
                                     charHasBeenDrafted = true;
+                                    break;
                                 }
                             }
                             if (!charHasBeenDrafted) {
-                                charOut.append(character + ", ");
+                                charOut.append(character).append(", ");
                             }
                         }
                         output.format("message: " + charOut.toString() + "\n");
