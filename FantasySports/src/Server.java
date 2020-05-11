@@ -295,16 +295,22 @@ public class Server extends JFrame {
                             String[] tradeStuff = tradeAttempt.split(",");
                             String playerTo = tradeStuff[0].trim(), toTrade = tradeStuff[1].trim(), toReceive = tradeStuff[2].trim();
 
-                            if (players[Integer.parseInt(playerTo) - 1].getTeam().hasCharacter(toReceive)) {
-                                trades.add(new Trade(playerNumber, Integer.parseInt(playerTo), toTrade, toReceive));
-                                for (PrintWriter writer : connectedPlayers) {
-                                    if (writer == players[Integer.parseInt(playerTo) - 1].output) {
-                                        writer.println("message: Player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
-                                        displayMessage("\nPlayer " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                            if (getTeam().hasCharacter(toTrade)) {
+                                if (players[Integer.parseInt(playerTo) - 1].getTeam().hasCharacter(toReceive)) {
+                                    trades.add(new Trade(playerNumber, Integer.parseInt(playerTo), toTrade, toReceive));
+                                    for (PrintWriter writer : connectedPlayers) {
+                                        if (writer == players[Integer.parseInt(playerTo) - 1].output) {
+                                            writer.println("message: Player " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                            displayMessage("\nPlayer " + playerNumber + " has requested a trade, " + toReceive + " for " + toTrade + " \n ");
+                                        }
                                     }
+                                } else {
+                                    output.format("trade: Player does not have that character\n");
+                                    output.flush();
                                 }
-                            } else {
-                                output.format("trade: Player does not have that character\n");
+                            }
+                            else {
+                                output.format("trade: You do not have that character\n");
                                 output.flush();
                             }
                         } catch (ArrayIndexOutOfBoundsException bound) {
